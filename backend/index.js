@@ -27,7 +27,9 @@ const { authenticateToken } = require('./utilities.js');
 //     allowedHeaders: ['Content-Type', 'Authorization']
 // }));
 
-app.listen(8080,()=>{
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT,()=>{
     console.log("Server is Listening on Port 8080");
 });
 
