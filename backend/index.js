@@ -17,7 +17,7 @@ app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());    
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { authenticateToken } = require('./utilities.js');
 //const { default: axiosInstance } = require('../frontend/utils/axiosInstance.js');
 
