@@ -6,7 +6,7 @@ import LandingPage from './components/landingpage';
 // import LoginForm from './components/loginPage';
 import LoginForm from './components/loginPageNew';
 import SignupForm from './components/signupPageNew';
-import Dashboard from './components/dashboardNEw';
+import Dashboard from './components/dashboardNew';
 //import Dashboard from './components/dashboard';
 //import TripsDashboard from './components/tripsDashboard';
 import TripsDashboard from './components/tripDashboardNew';
