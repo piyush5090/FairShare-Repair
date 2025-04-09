@@ -22,7 +22,7 @@ const IndiTripDashboard = () =>{
   const[currTrip,setCurrTrip]=useState(null);
   const[members,setMembers]=useState([]);
   const[showAddSpend,setShowAddSpend] = useState(false);
-  const[showEnd,setShowEnd] = useState(true);
+  const[showEnd,setShowEnd] = useState(false);
 
   const { tripData } = location.state || {};
 
