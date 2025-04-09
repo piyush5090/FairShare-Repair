@@ -13,14 +13,14 @@ const getInitials = (name) => {
 const ProfileInfo = ({ userInfo, onLogout }) => {
     return (
         userInfo && (
-            <div className="flex items-center gap-3 p-2 sm:p-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full text-slate-900 bg-slate-100 font-medium">
+            <div className="flex items-center gap-2 p-2 sm:p-4">
+                <div className="w-12 h-12 sm:w-12 sm:h-12 flex items-center justify-center rounded-full text-slate-900 bg-slate-100 font-medium">
                     {getInitials(userInfo.fullname)}
                 </div>
                 <div>
-                    <p className="text-xs sm:text-sm font-medium">{userInfo.username}</p>
+                    <p className="text-md sm:text-md font-medium">{userInfo.username}</p>
                     <button
-                        className="text-xs sm:text-sm text-slate-700 underline"
+                        className="text-md sm:text-sm text-slate-700 underline"
                         onClick={onLogout}
                     >
                         Logout

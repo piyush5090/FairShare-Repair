@@ -3,13 +3,23 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import './App.css';
 import './index.css';
 import LandingPage from './components/landingpage';
-import LoginForm from './components/loginPage';
-import SignupForm from './components/signupPage';
-import Dashboard from './components/dashboard';
+// import LoginForm from './components/loginPage';
+import LoginForm from './components/loginPageNew';
+import SignupForm from './components/signupPageNew';
+import Dashboard from './components/dashboardNEw';
+//import Dashboard from './components/dashboard';
+//import TripsDashboard from './components/tripsDashboard';
+import TripsDashboard from './components/tripDashboardNew';
 import TripDashboard from './components/tirpdashboard';
 import PayHistory from './components/payHistory';
 import IntroPage from './components/intropage';
 import TripSuggestion from './components/tripSuggestion';
+import "@fontsource/lexend-deca"; 
+import GroupDashboard from './components/groupDashboard';
+import IndiTripDashboard from './components/indiTripDashboard';
+import IndiSpend from './components/test';
+//import TripsDashboard from './components/tripsDashboard';
+
 
 
 function App() {
@@ -39,14 +49,17 @@ function App() {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/signup" element={<SignupForm />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/tripsDashboard" element={<TripsDashboard/>} />
+      <Route path="/groupDashboard" element={<GroupDashboard />} />
       <Route path="/trip" element={<TripDashboard />} />
       <Route path="/history" element={<PayHistory />} />
       <Route path="/intro" element={<IntroPage />} />
       <Route path="tripSuggestion" element={<TripSuggestion />} />
+      <Route path="/indiTripDashboard" element={<IndiTripDashboard />} />
+      <Route path="/test"  element={<IndiSpend />}/>
     </Routes>
   );
 }

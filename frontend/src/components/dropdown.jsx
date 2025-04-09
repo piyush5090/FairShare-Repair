@@ -6,12 +6,12 @@ const Dropdown = ({ setStatusFilter, statusFilter }) => {
   };
 
   return (
-      <div className="relative w-30 2xl:w-64 xl:w-64 md:w-64 sm:w-64">
+      <div>
         <select
           id="statusDropdown"
           value={statusFilter}
           onChange={handleChange}
-          className="w-full max-w-screen px-2 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="w-full max-w-screen px-2 py-2 text-gray-700 border-2 border-teal-400 rounded-[19px] bg-transparent box-border"
         >
           <option value="all">All</option>
           <option value="ongoing">Ongoing</option>

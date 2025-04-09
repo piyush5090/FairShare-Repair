@@ -85,7 +85,7 @@ const BottomNavBar = () => {
   );
 };
 
-function Dashboard() {
+function TripsDashboard() {
   const [visible, setVisible] = useState(false);
   const formRef = useRef(null);
   const [trips, setTrips] = useState([]); // State for storing trips
@@ -194,4 +194,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default TripsDashboard;

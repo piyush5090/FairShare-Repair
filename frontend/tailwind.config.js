@@ -8,12 +8,13 @@ export default {
     extend: {
       // Extend the default theme with custom fonts and colors
       fontFamily: {
-        // Define a custom 'sans' font family using Inter
-        sans: ['Inter', 'sans-serif'],
-        // Optionally, you can define additional font families
-        // heading: ['Inter', 'sans-serif'],
-        // body: ['Inter', 'sans-serif'],
+        nunito: ['Nunito', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        lexend: ['Lexend Deca', 'sans-serif'],
+        sans: ['Inter', 'Lexend Deca', 'sans-serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
       },
+      
       colors: {
         // Ensure your primary color is defined if not already
         primary: {
