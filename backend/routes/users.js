@@ -6,7 +6,7 @@ const trips = require('../models/trips');
 const {authenticateToken} = require("../utilities");
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const cors = require("cors");
 
 
