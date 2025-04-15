@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import axios from "axios";
+import { FaExclamation } from "react-icons/fa";
+
 
 const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) =>{
 
@@ -67,7 +69,7 @@ const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) =>{
     <>
     <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center"></div>
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="flex inset-0 z-50 flex-col items-center w-[342px] h-[285px] border border-[#75B3F8] backdrop-blur-sm transition-opacity duration-300 rounded-[33px] bg-[#CCEFD4]">
+      <div className="flex inset-0 z-50 flex-col items-center w-[342px] h-[285px] border border-[#75B3F8] backdrop-blur-sm transition-opacity duration-300 rounded-[33px] bg-slate-300">
         <p className="text-[30px] font-nunito font-semibold mt-4 leading-[41px] tracking-[0px] text-center text-[#374151]">
           Add New Spend
         </p>
@@ -94,7 +96,8 @@ const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) =>{
             onChange={onChange}
         />
 
-        {error && <p className="text-red-700 font-semibold mt-1">{error} </p>}
+        {error && <p className="flex justify-center items-center text-red-700 font-medium mt-1">
+          <FaExclamation className="h-[12px] w-[12px]"/>{error} </p>}
 
         </div>
 
@@ -108,7 +111,7 @@ const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) =>{
           <button className="w-[117px] mx-2 h-[45px] rounded-[21px] bg-[rgb(118,198,127)] text-white font-bold"
             onClick={handleSubmit}
           >
-              Add
+              {isLoading ? "Adding.." : "Add"}
           </button>
         </div>
       </div>

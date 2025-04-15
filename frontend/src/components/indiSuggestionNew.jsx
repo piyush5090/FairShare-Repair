@@ -28,7 +28,7 @@ const IndiSuggetion = ()=>{
 
   return(
     <>
-    <div className="flex justify-center items-center mt-36 px-3 flex-col w-full h-[240px] ">
+    <div className="flex justify-center items-center px-3 flex-col w-full h-[240px] ">
     <div className="flex flex-col p-3 w-full h-[190px] rounded-[15px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-[rgba(242,236,236,0.17)]">
       {/* first section */}
       <div className="flex w-full h-[65px] justify-between rounded-[15px] bg-[rgba(242,236,236,0.17)]">

@@ -59,7 +59,7 @@ const TripsDashboard = () => {
       <div className="fixed insert-0 z-20 backdrop-blur-lg bg-black/20 pointer-events-none"></div>
     )}
 
-      <div className="fixed top-12 flex items-end justify-between px-5 mt-6 gap-10">
+      <div className="fixed top-12 flex items-end justify-between px-5 mt-6 gap-10 z-10 bg-opacity-100">
         <p className="text-gray-700 font-nunito text-2xl font-extrabold leading-[33px]">
           Trips by you:
         </p>
@@ -67,11 +67,25 @@ const TripsDashboard = () => {
       </div>
 
       {isLoading ? (
-        <div className="Flex justify-center items-center min-h-screen">
-          <div className="loader"></div>
-          <p>Loading you trips...</p>
+  <div className="flex flex-col gap-4 mt-32 px-4">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <div
+        key={i}
+        className="flex w-full max-w-2xl justify-between items-center mx-auto px-4 h-[80px] rounded-[14px] shadow-md bg-gray-200 animate-pulse"
+      >
+        <div className="flex justify-center items-center w-[55px] h-[55px] bg-gray-300 rounded-full"></div>
+
+        <div className="flex flex-col justify-start items-start flex-1 ml-4 gap-2">
+          <div className="h-6 w-40 bg-gray-300 rounded-md"></div>
+          <div className="h-4 w-24 bg-gray-300 rounded-md"></div>
         </div>
-      ) : (
+
+        <div className="w-[60px] h-[60px] bg-gray-300 rounded-md"></div>
+      </div>
+    ))}
+  </div>
+) : (
+
         <div className="absolute flex flex-col w-full top-32 h-screen">
             {filteredTrips.length > 0 ? (
               filteredTrips.map((trip,index) => (
@@ -88,17 +102,22 @@ const TripsDashboard = () => {
             )}
         </div>
       )}
-
-      
-            <IoIosAddCircle className="fixed w-[90px] h-[90px] left-[288px] right-[20px] top-[696px] bottom-[79px] text-[rgb(20,184,166)]" 
-              onClick={handleForm}
-            />
       
       {showForm && (
         <CreateTripForm cancelForm={cancelForm} getAllTrips={getAllTrips} />
       )}
       
-      <BottomNavbar />
+      <div className="fixed flex justify-center items-center bottom-0 w-full h-[62px] left-0 bg-gray-300 shadow-md">
+      <div className="mx-2 flex flex-col justify-center items-center h-[140px] w-[80px] mb-3 gap-">
+            <div className="flex justify-center items-center h-[80px] w-[80px] rounded-full bg-[rgb(243,255,246)]">
+              <IoIosAddCircle className="relative w-[78px] h-[78px] text-[rgb(20,184,166)]" 
+                    onClick={handleForm}
+              /> 
+            </div> 
+            <p className="text-[14px] mb-9 mt-1">Create Trip</p>
+        </div>   
+      </div>
+
 
     </>
   );

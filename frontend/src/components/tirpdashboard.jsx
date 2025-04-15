@@ -50,26 +50,6 @@ function TripDashboard() {
         setShowEndTripModal(true);
     };
 
-    const confirmEndTrip = async () => {
-        console.log("Trip has ended.");
-        try {
-            // Make the API call to end the trip
-            const response = await axiosInstance.post(`/api/trip/end/${currTrip?._id}`);
-            
-            // Log the result in the console
-            console.log("End Trip Response:", response.data);
-
-            // Redirect to the TripSuggestion page with tripId
-            navigate("/tripSuggestion", { state: { tripId: currTrip?._id } });
-
-        } catch (error) {
-            console.error("Error ending trip:", error);
-        } finally {
-            setShowEndTripModal(false);
-            setShowPopup(false);
-        }
-    };
-
     const cancelEndTrip = () => {
         setShowEndTripModal(false);
     };

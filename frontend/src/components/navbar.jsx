@@ -8,16 +8,18 @@ import axiosInstance from "../../utils/axiosInstance"; // Correct path for your 
 import logo from '../assets/onlylogo.png';
 const Navbar = ( {back} ) => {
     const [userInfo, setUserInfo] = useState(null);
-    const [loading, setLoading] = useState(true); // Add a loading state
+    const [loading, setLoading] = useState(false); // Add a loading state
     const navigate = useNavigate();
     const navbarRef = useRef(null);
 
     const getUserInfo = async () => {
+        setLoading(true);
         try {
             const response = await axiosInstance.get("/getUser");
             if (response.data && response.data.user) {
                 setUserInfo(response.data.user);
             }
+            setFetched(true);
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 localStorage.clear();
@@ -41,24 +43,29 @@ const Navbar = ( {back} ) => {
         back();
     }
 
+    const handleImage = ()=>{
+        navigate("/dashboard");
+    }
+
     return (
-        <div ref={navbarRef} className="fixed w-full flex justify-between h-16 left-[-3px] py-1 right-[3px] top-0 bottom-0 bg-gray-400 bg-opacity-75">
+        <div ref={navbarRef} className="fixed w-full flex justify-between h-16 left-[-3px] py-1 right-[3px] top-0 bottom-0 bg-gray-300 bg-opacity-100 z-10">
             <div className="flex">
             <IoChevronBackOutline className="ml-[1px] h-[50px] w-[50px]" onClick={handleBack}/>
                 <img
                     className="h-[50px] w-[50px]" // Set height and width
                     src={logo} // Using the imported logo
-                    alt="Your Logo" // Replace with your logo's alt text
+                    alt="Your Logo"
+                    onClick={handleImage} // Replace with your logo's alt text
                 />
             </div>
             
             <div className="flex items-center gap-4 mr-3">
-                {loading ? ( // Show loading state while fetching user info
-                    <div className="flex items-center space-x-2">
-                        <div className="loader"></div>
-                        <p>Loading...</p>
-                    </div>
-                ) : userInfo ? ( // Show ProfileInfo when userInfo is available
+             {loading ? (
+                    <div className="flex items-center gap-4 animate-pulse">
+                    <div className="h-10 w-10 rounded-full bg-gray-400"></div>
+                     <div className="h-4 w-24 bg-gray-400 rounded"></div>
+                     </div>
+                        ) : userInfo ? (
                     <ProfileInfo userInfo={userInfo} onLogout={onLogout} />
                 ) : (
                     // Show Logout button when no user data is found
