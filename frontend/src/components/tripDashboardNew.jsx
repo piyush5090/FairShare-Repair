@@ -55,16 +55,24 @@ const TripsDashboard = () => {
     <>
       <Navbar back={back} />
 
-    {showForm && (
-      <div className="fixed insert-0 z-20 backdrop-blur-lg bg-black/20 pointer-events-none"></div>
-    )}
+      <div className="flec flec-col ">
+        {/* Header section(trip details) */}
+            {showForm && (
+          <div className="fixed insert-0 z-20 backdrop-blur-lg bg-black/20 pointer-events-none"></div>
+            )}
 
-      <div className="fixed top-12 flex items-end justify-between px-5 mt-6 gap-10 z-10 bg-opacity-100">
-        <p className="text-gray-700 font-nunito text-2xl font-extrabold leading-[33px]">
-          Trips by you:
-        </p>
-        <Dropdown setStatusFilter={setStatusFilter} statusFilter={statusFilter}/>
+          <div className="fixed z-10 h-[60px] flex items-center w-screen px-2 justify-between mt-[65px] bg-[#f3fff6]">
+              <div className="flex w-full items-center justify-between bg-opacity-100">
+                <p className="w-full text-gray-700 font-nunito text-left ml-2 text-2xl font-extrabold">
+                  Trips by you:
+                </p>
+                <Dropdown setStatusFilter={setStatusFilter} statusFilter={statusFilter}/>
+              </div>
+          </div>
+          
       </div>
+
+    
 
       {isLoading ? (
   <div className="flex flex-col gap-4 mt-32 px-4">

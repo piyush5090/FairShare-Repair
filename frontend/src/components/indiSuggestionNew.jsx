@@ -1,11 +1,11 @@
 import { SiPhonepe } from "react-icons/si";
 import { SiPaytm } from "react-icons/si";
 import { FaGooglePay } from "react-icons/fa";
+import { useEffect } from "react";
 
 
 
-
-const IndiSuggetion = ()=>{
+const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fromMemberUsername, toMemberFullname, toMemberUsername, amount})=>{
 
   const avatarColors = [
     "#A7D2CB", // mint green
@@ -20,15 +20,21 @@ const IndiSuggetion = ()=>{
     "#BEE1E6"  // light aqua
   ];
 
-  let index = 0;
+  useEffect(()=>{
+    console.log(fromMemberFullname);
+  })
+
   const avatarBgColor = avatarColors[index % avatarColors.length];
-  // const nameParts = payment?.fullname.trim().split(" ");
-  // const isLongFullname = payment?.fullname?.length > 13;
+  const avatarBgColor2 = avatarColors[index * 2 % avatarColors.length];
+  const nameParts1 = fromMemberFullname.trim().split(" ");
+  const nameParts2 = toMemberFullname.trim().split(" ");
+  const isLongFromMemberFullname = fromMemberFullname?.length > 15;
+  const isLongToMemberFullname = toMemberFullname?.length > 13;
   // const isLongUsername = payment?.username.kength > 15;
 
   return(
     <>
-    <div className="flex justify-center items-center px-3 flex-col w-full h-[240px] ">
+    <div className="flex justify-center mb-2 items-center px-3 flex-col w-full h-[240px] ">
     <div className="flex flex-col p-3 w-full h-[190px] rounded-[15px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-[rgba(242,236,236,0.17)]">
       {/* first section */}
       <div className="flex w-full h-[65px] justify-between rounded-[15px] bg-[rgba(242,236,236,0.17)]">
@@ -37,21 +43,20 @@ const IndiSuggetion = ()=>{
                   style={{ backgroundColor: avatarBgColor }}
           >
             <p className="text-[18px] font-nunito font-normal leading-[38px] tracking-[0px] text-left">
-                    PG
-                    {/* {nameParts[0]?.charAt(0).toUpperCase()}{nameParts[1]?.charAt(0).toUpperCase()} */}
+                    {nameParts1[0]?.charAt(0).toUpperCase()}{nameParts1[1]?.charAt(0).toUpperCase()}
             </p>
           </div>
     
                 
           <div className="w-auto flex flex-col items-start"> 
             <p className="mx-2 text-[18px] font-[Montserrat] font-semibold italic leading-[27px] tracking-[0px] text-left text-blue-500 ">
-                      {/* {isLongFullname ? `${payment?.fullname?.slice(0,12)}...` : payment?.fullname} */}
+                      {isLongFromMemberFullname ? `${fromMemberFullname?.slice(0,12)}...` : fromMemberFullname}
                         {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
                             <span className={isLongFullname ? "scroll-marquee" : ""}>
                                  {fullname}
                             </span>
                         </div> */}
-                        Piyush Govin... <span className="relative top-3 ml-3 text-gray-800 text-[20px] font-semibold">can pay</span>
+                        <span className="relative top-3 ml-3 text-gray-800 text-[20px] font-semibold">can pay</span>
             </p>
   
                     
@@ -62,7 +67,7 @@ const IndiSuggetion = ()=>{
                                  {fullname}
                             </span>
                         </div> */}
-                        @piyush_5090
+                        @{fromMemberUsername}
             </p>
           </div>
         </div>
@@ -74,7 +79,7 @@ const IndiSuggetion = ()=>{
         <div className="flex w-full h-[60px] justify-between rounded-[15px] bg-[rgba(242,236,236,0.17)]">
           <div className="flex items-center h-[65px] ml-2 w-[140px]">
             <span class="text-green-600 flex font-montserrat text-[22px] font-semibold leading-[34px] tracking-[0px] text-left">
-                      1290/-{/* {payment?.spend}/- */}
+                      {amount.toFixed(2)}/-{/* {payment?.spend}/- */}
             </span>
           </div>
 
@@ -85,24 +90,22 @@ const IndiSuggetion = ()=>{
           <div className="flex w-full h-[65px] justify-end rounded-[15px] mb-[1px] bg-[rgba(242,236,236,0.17)]">
             <div className="px-1 justify-center items-center flex">
               <div className="flex items-center justify-center w-[50px] h-[50px] rounded-[14px]"
-                  style={{ backgroundColor: avatarBgColor }}
+                  style={{ backgroundColor: avatarBgColor2 }}
               >
               
               <p className="text-[18px] font-nunito font-normal leading-[38px] tracking-[0px] text-left">
-                    PG
-                    {/* {nameParts[0]?.charAt(0).toUpperCase()}{nameParts[1]?.charAt(0).toUpperCase()} */}
+                    {nameParts2[0]?.charAt(0).toUpperCase()}{nameParts2[1]?.charAt(0).toUpperCase()}
               </p>
             </div>
     
             <div className="w-auto flex flex-col items-start"> 
               <p className="mx-2 text-[18px] font-[Montserrat] font-semibold italic leading-[27px] tracking-[0px] text-left text-blue-500 ">
-                      {/* {isLongFullname ? `${payment?.fullname?.slice(0,12)}...` : payment?.fullname} */}
+                      {isLongToMemberFullname ? `${toMemberFullname?.slice(0,11)}...` : toMemberFullname}
                         {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
                             <span className={isLongFullname ? "scroll-marquee" : ""}>
                                  {fullname}
                             </span>
                         </div> */}
-                        Piyush Govin... 
               </p>
   
               <p className="mx-2 text-[13px] font-[Montserrat] font-medium italic leading-[21px] tracking-[0px] text-left text-gray-600">
@@ -112,7 +115,7 @@ const IndiSuggetion = ()=>{
                                  {fullname}
                             </span>
                         </div> */}
-                        @piyush_5090
+                        @{toMemberUsername}
               </p>
             </div>
           </div>

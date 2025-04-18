@@ -54,7 +54,22 @@ const userSchema = new mongoose.Schema({
                 default: 'ongoing',  // Default to 'ongoing'
             }
         }
-    ]
+    ],
+    notifications: [
+        {
+            fromId: {type : String},
+            fromUsername: {type: String},
+            fromFullname : {type: String},
+            message:{type: String},
+            tripId : {type:String},
+            tripName: {type:String},
+            time: {
+                type: Date,
+                default: Date.now,
+            },
+        }
+    ],
+    upiId : {type : String}
 });
 
 const users = mongoose.model("Users", userSchema);

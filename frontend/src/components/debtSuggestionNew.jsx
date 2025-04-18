@@ -10,6 +10,7 @@ const Suggestions = () => {
   const  location = useLocation();
   const[isLoading,setIsLoading] = useState(false);
   const[suggestions,setSuggestions]=useState([]);
+  const[tripDetails,setTripDetails]=useState(null);
 
   const tripId = location.state?.tripId;
 
@@ -19,6 +20,9 @@ const Suggestions = () => {
             const response = await axiosInstance.get(`/tripSuggestions/${tripId}`);
             console.log(response);
             setSuggestions(response.data.suggestions);
+
+            const tripRes = await axiosInstance.get(`/getTrip/${tripId}`);
+            setTripDetails(tripRes.data);
         }catch(err){
             console.log(err);
         }finally{
@@ -27,9 +31,10 @@ const Suggestions = () => {
     };
 
     useEffect(()=>{
-        console.log(tripId);
         fetchSuggestions();
-        console.log(suggestions);   
+        
+        suggestions ? console.log(suggestions) : console.log("Error");
+        tripDetails ? console.log(tripDetails) : console.log("Error");
     },[tripId]);
 
 
@@ -49,8 +54,8 @@ const Suggestions = () => {
 ">       
       <div className="w-full h-[77px] rounded-[12px] bg-[rgba(117,179,248,0.11)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] flex items-center px-3 bg-opacity-100 z-10">
         <p className="font-montserrat text-[22px] font-semibold leading-[1.2] tracking-[0px] text-left">
-          Total Trip Cost:- <span className="text-green-700 font-">20000/-</span><br />
-          Per Head Share:- <span className="text-green-700">4000/-</span>
+          Total Trip Cost:- <span className="text-green-700 font-">{tripDetails?.totalTripCost?.toFixed(2)}</span><br />
+          Per Head Share:- <span className="text-green-700">{tripDetails?.perMemberShare?.toFixed(2)}</span>
         </p>
       </div>
     </div> 
@@ -62,8 +67,25 @@ const Suggestions = () => {
 
       
 
-    <div className="absolute flex flex-col w-full bottom-8 top-52 h-screen overflow-y-auto">
-        <IndiSuggetion />
+    <div className="absolute flex flex-col w-full bottom-8 top-56 h-screen overflow-y-auto">
+      {suggestions.length > 0 ? (
+        suggestions.map((suggestion, index)=> (
+          <IndiSuggetion  
+          index = {index+1}
+          fromMemberId = {suggestion.fromMemberId}
+          fromMemberFullname = {suggestion.fromMemberFullname}
+          fromMemberUsername = {suggestion.fromMemberUsername}
+          toMemberId ={suggestion.toMemberId}
+          toMemberFullname = {suggestion.toMemberFullname}
+          toMemberUsername = {suggestion.toMemberUsername}
+          amount = {suggestion.amount}
+          />
+        ))
+      ) : (
+        <p>No suggestions..</p>
+      )}
+
+        
 
     </div>
     </>

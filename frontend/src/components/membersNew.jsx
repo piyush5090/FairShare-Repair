@@ -8,7 +8,7 @@ import { FcAbout } from "react-icons/fc";
 import { IoIosAddCircle } from "react-icons/io";
 import { IoPersonAddSharp } from "react-icons/io5";
 import axiosInstance from "../../utils/axiosInstance";
-
+import AddMembers from "./addMembersNew";
 
 
 const Members = () =>{
@@ -18,11 +18,16 @@ const Members = () =>{
     const[isLoading,setIsLoading]=useState(false);
     const[tripDetails,setTripDetails] = useState(null);
     const[error,setError]=useState(null);
+    const[showUserModal,setShowUsersModal]=useState(false);
 
     const { tripData } = location.state || {};
 
     const back = () =>{
         navigate(-1);
+    }
+
+    const handleUsers = () =>{
+    setShowUsersModal(!showUserModal);
     }
 
     const isLongTripname = tripDetails?.tripname.length > 12;
@@ -31,7 +36,7 @@ const Members = () =>{
         console.log("hello");
         setIsLoading(true);
         try{
-            const _id = tripData._id;
+            const _id = tripData.TripId;
             const response = await axiosInstance.get(`/getTrip/${_id}`);
             console.log(response);
             setTripDetails(response.data);
@@ -96,6 +101,10 @@ const Members = () =>{
             </div>
             )}
 
+            {showUserModal && (
+              <AddMembers handleUsers={handleUsers} tripData={tripData}  />
+            )}
+
 
         <div className="absolute flex flex-col w-full top-36 h-screen">
             {tripDetails?.members.length > 0 ? (
@@ -121,7 +130,11 @@ const Members = () =>{
               {/* <IoIosAddCircle className="relative w-[78px] h-[78px] text-[rgb(20,184,166)]" 
                     // onClick={handleForm}
               />  */}
-              <IoPersonAddSharp className="relative w-[42px] h-[42px] text-gray-500" />
+              <IoPersonAddSharp className="relative w-[42px] h-[42px] text-gray-500" 
+                onClick={handleUsers}
+                tripData = {tripData}
+                getTripDetails = {getTripDetails}
+              />
             </div>
 
             <p className="text-[14px] mb-9 mt-1">Add User</p>

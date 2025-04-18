@@ -70,7 +70,7 @@ const filteredUsers = searchQuery
 ? Allusers.filter((user) =>
     user?.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user?.fullname?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  ) 
 : Allusers; // Show all users if searchQuery is empty
 
   return (
@@ -102,6 +102,7 @@ const filteredUsers = searchQuery
               <Indimember
                 key={user._id}
                 user={user}
+                
                 tripData={tripData}
                 index={index + 1}
               />

@@ -3,9 +3,13 @@ import { useState, useEffect } from "react";
 import NotificationCard from "./notificationCard";
 
 
-const AddMembers = ({tripData, getTripDetails, handleUsers})=>{
+const Notifications = ({ userInfo,  handleBell, getUserInfo })=>{
 
     const[isLoading,setIsLoading]=useState(false);
+
+    useEffect(()=>{
+        getUserInfo();
+    },[]);
 
   return(
     <>
@@ -18,23 +22,24 @@ const AddMembers = ({tripData, getTripDetails, handleUsers})=>{
 
           {/* Users section */}
           <div className="w-full h-full mt-3 mb overflow-scroll">
-            {/* {filteredUsers?.length > 0 ? (
-             filteredUsers.map((user, index)=>(
-                <IndiUser 
-                    key={user._id}
-                    user={user}
-                    username={user.username}
-                    fullname={user.fullname}
-                    email={user.email}
-                    tripData={tripData}
-                    index={index+1}
-                />
+            {userInfo.notifications?.length > 0 ? (
+             userInfo.notifications.map((info, index)=>(
+                <NotificationCard userInfo={userInfo} info={info} getUserInfo={getUserInfo} handleBell={handleBell}/>
              ))   
                 
                     ) : (
-                    <p>No Users found...</p>
-                    )} */}
+                    <p>No new notifications..</p>
+                    )}
             </div>
+
+            <div className="w-full h-[70px] bg-[#f3fff6] rounded-[33px] flex items-end justify-around">
+                    <button className="h-[40px] font-montserrat w-[100px] font-normal bg-slate-300 rounded-[33px]"
+                        onClick={handleBell}
+                    >
+                        Close
+                    </button>
+            </div>      
+
         </div>
       </div>
 
@@ -42,4 +47,4 @@ const AddMembers = ({tripData, getTripDetails, handleUsers})=>{
   );
 }
 
-export default AddMembers;
+export default Notifications;

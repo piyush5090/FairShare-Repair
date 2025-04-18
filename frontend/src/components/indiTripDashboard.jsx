@@ -28,6 +28,7 @@ const IndiTripDashboard = () => {
   const [members, setMembers] = useState([]);
   const [showAddSpend, setShowAddSpend] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
+  
 
   const {tripData} = location.state || {};
 
@@ -83,7 +84,7 @@ const IndiTripDashboard = () => {
   }
 
   const handleMembers = () =>{
-    navigate("/members", { state : { tripData : currTrip }});
+    navigate("/members", { state : { tripData : tripData }});
   }
 
   const handleSettle = () =>{
@@ -127,8 +128,11 @@ const IndiTripDashboard = () => {
         </>
       ) : (
         <>
-        <div className="fixed flex items-center justify-between w-screen h-[65px] top-[70px] bottom-[-70px] rounded-[28px] px-3 z-10"> 
-        <div className="flex items-center justify-between w-screen h-[65px] top-[70px] bottom-[-70px] rounded-[28px] bg-gray-200 px-3 z-10">
+              {/* Trip detals section */}
+        <div className="flex felx-col mt-[65px]">
+          <div className="fixed w-screen h-[90px] items-center justify-center z-10 bg-[#f3fff6] px-2">
+          <div className="flex items-center justify-between w-full h-[90px] rounded-[28px]"> 
+          <div className="flex items-center justify-between w-screen h-[65px] top-[70px] bottom-[-70px] rounded-[28px] bg-gray-200 px-3 z-10">
             <div className="w-[261px] flex items-center justify-start">
               <div className="ml-1 w-[50px] h-[50px] bg-gray-300 rounded-full flex justify-center items-center">
                 <p className="text-[22px] font-nunito font-normal leading-[38px] text-[#374151]">
@@ -150,7 +154,7 @@ const IndiTripDashboard = () => {
            {formattedDate}
           </p>
           </div>
-        </div>
+          </div>
 
           <div className="flex h-[65px] w-full items-end justify-center gap-1 ">
             <div className="h-[65px] flex flex-col w-full items-center justify-center">
@@ -167,19 +171,14 @@ const IndiTripDashboard = () => {
                 
               </div>
           </div>
-        
-        
-      </div>
+          </div>
+          </div>
+          </div>
 
-      
+          {/* Indi payer section */}
 
-
-
-        </div>
-          
-
-          <div className="absolute flex flex-col w-full top-36 h-screen">
-            {members.length > 0 ? (
+          <div className="flex flex-col w-full mt-[70px] overflow-scroll">
+          {members.length > 0 ? (
               members.map((member, index) => (
                 <IndiSpend
                   key={member._id}
@@ -193,6 +192,26 @@ const IndiTripDashboard = () => {
             ) : (
               <p className="text-center text-gray-600 mt-6">No Spends Yet...</p>
             )}
+
+        </div>
+
+        
+      </div>
+      
+      
+
+
+
+        
+
+
+        
+
+        
+          
+
+          <div className="absolute flex flex-col w-full top-36 h-screen">
+            
           </div>
         </>
       )}

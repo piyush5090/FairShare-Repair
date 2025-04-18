@@ -6,11 +6,18 @@ import { useNavigate } from "react-router-dom";
 import ProfileInfo from "../cards/profileInfo";
 import axiosInstance from "../../utils/axiosInstance"; // Correct path for your axios instance
 import logo from '../assets/onlylogo.png';
+import ProfileCard from "./profileCard";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import Notifications from "./notificationsNew";
+
+
 const Navbar = ( {back} ) => {
     const [userInfo, setUserInfo] = useState(null);
     const [loading, setLoading] = useState(false); // Add a loading state
     const navigate = useNavigate();
     const navbarRef = useRef(null);
+    const[showProfile,setShowProfile]=useState(false);
+    const[showNotifications,setShowNotifications]=useState(false);
 
     const getUserInfo = async () => {
         setLoading(true);
@@ -30,6 +37,18 @@ const Navbar = ( {back} ) => {
         }
     };
 
+    const NotificationIcon = ({ count, onClick }) => (
+        <div className="relative w-fit cursor-pointer" onClick={onClick}>
+          <IoIosNotificationsOutline className="text-[30px] text-gray-700" />
+          {count > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 rounded-full font-semibold">
+              {count}
+            </span>
+          )}
+        </div>
+      );
+      
+
     const onLogout = () => {
         localStorage.clear();
         navigate("/"); // Redirect to home on logout
@@ -47,7 +66,18 @@ const Navbar = ( {back} ) => {
         navigate("/dashboard");
     }
 
+    const handleProfile = ()=>{
+        setShowProfile(!showProfile);
+    }
+
+    const handleBell = ()=>{
+        setShowNotifications(!showNotifications);
+    }
+
+    
+
     return (
+        <>
         <div ref={navbarRef} className="fixed w-full flex justify-between h-16 left-[-3px] py-1 right-[3px] top-0 bottom-0 bg-gray-300 bg-opacity-100 z-10">
             <div className="flex">
             <IoChevronBackOutline className="ml-[1px] h-[50px] w-[50px]" onClick={handleBack}/>
@@ -59,14 +89,18 @@ const Navbar = ( {back} ) => {
                 />
             </div>
             
-            <div className="flex items-center gap-4 mr-3">
+            <div className="flex items-center gap-1 mr-3">
              {loading ? (
                     <div className="flex items-center gap-4 animate-pulse">
                     <div className="h-10 w-10 rounded-full bg-gray-400"></div>
-                     <div className="h-4 w-24 bg-gray-400 rounded"></div>
+                     {/* <div className="h-4 w-24 bg-gray-400 rounded"></div> */}
                      </div>
                         ) : userInfo ? (
-                    <ProfileInfo userInfo={userInfo} onLogout={onLogout} />
+                            <>
+                            <NotificationIcon count={userInfo.notifications?.length} onClick={handleBell} userInfo={userInfo} handleBell={handleBell} />
+                    <ProfileInfo userInfo={userInfo} onLogout={onLogout} handleProfile={handleProfile} />
+                    
+                    </>
                 ) : (
                     // Show Logout button when no user data is found
                     <button 
@@ -78,6 +112,11 @@ const Navbar = ( {back} ) => {
                 )}
             </div>
         </div>
+
+                {showProfile && <ProfileCard handleProfile={handleProfile} onLogout={onLogout} userInfo={userInfo} getUserInfo={getUserInfo} />}
+                {showNotifications && <Notifications onClick={handleBell} userInfo={userInfo} handleBell={handleBell} getUserInfo={getUserInfo}/> }
+
+        </>
     );
 };
 

@@ -1,7 +1,7 @@
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const IndiTrip = ({ tripname, tripId, createdAt, index }) => {
   const navigate = useNavigate();
@@ -12,6 +12,11 @@ const IndiTrip = ({ tripname, tripId, createdAt, index }) => {
     CreatedAt: createdAt,
   });
 
+  
+
+  const [TripId,setTripId] = useState('');
+  
+
   const formattedDate = new Date(createdAt).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
@@ -20,6 +25,7 @@ const IndiTrip = ({ tripname, tripId, createdAt, index }) => {
 
   const handleClick = async () => {
     try {
+      // navigate("/indiTripDashboard", { state: { TripId : TripId } });
       navigate("/indiTripDashboard", { state: { tripData : tripData } });
       const res = await axiosInstance.get(`/getTrip/${tripId}`);
     } catch (err) {

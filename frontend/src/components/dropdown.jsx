@@ -6,7 +6,7 @@ const Dropdown = ({ setStatusFilter, statusFilter }) => {
   };
 
   return (
-      <div>
+      <div className='w-full'>
         <select
           id="statusDropdown"
           value={statusFilter}

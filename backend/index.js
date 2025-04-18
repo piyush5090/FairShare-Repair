@@ -143,6 +143,8 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         _id: isUser._id,
         fullname: isUser.fullname,
         trips : isUser.trips,
+        upiId : isUser.upiId,
+        notifications: isUser.notifications,
       },
       message: "",
     });
@@ -275,6 +277,7 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
         const currUser = req.body.currUser;
         const _id = currUser._id;
         const tripData = req.body.tripData;
+        const info = req.body.info;
 
         // Find the user by ID
         const user = await users.findById(_id);
@@ -307,6 +310,16 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
             (member) => member._id.toString() === user._id.toString() || member.username === user.username
         );
 
+
+        if (info && info._id) {
+            console.log("Removingg");
+            user.notifications = user.notifications.filter(
+                n => n._id.toString() !== info._id.toString()
+            );
+            await user.save();
+            console.log(`Removed notification with ID: ${info._id}`);
+        }
+        
         // If the member does not exist, add them to the trip
         if (!existingMember) {
             const newMember = {
@@ -319,6 +332,8 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
 
             fiTrip.members.push(newMember);
             await fiTrip.save();
+
+            
             console.log("Member added to trip successfully.");
         } else {
             console.log("Member already exists in the trip.");
@@ -441,6 +456,12 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
         const totalTripCost = trip.members.reduce((total, member) => total + member.totalSpend, 0);
         const perMemberShare = totalTripCost / trip.members.length;
 
+        trip.totalTripCost = totalTripCost;
+        trip.perMemberShare = perMemberShare;
+
+        
+
+
         // Step 2: Calculate balances for each member
         const balances = trip.members.map(member => ({
             _id: member._id,
@@ -508,7 +529,7 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
         trip.suggestedPayments = transactions.map(t => ({
             fromMemberId: t.fromMemberId,
             fromMemberFullname: t.fromMemberFullname,
-            fromMemberUsername: t.fromMemberFullname,
+            fromMemberUsername: t.fromMemberUsername,
             toMemberId: t.toMemberId,
             toMemberFullname: t.toMemberFullname,
             toMemberUsername: t.toMemberUsername,
@@ -586,7 +607,7 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
 
 
 // Assuming you already have your Trips model imported
-app.get("/tripSuggestions/:tripId", async (req, res) => {
+app.get("/tripSuggestions/:tripId",authenticateToken, async (req, res) => {
     const { tripId } = req.params;
 
     try {
@@ -599,13 +620,17 @@ app.get("/tripSuggestions/:tripId", async (req, res) => {
 
         // Extract suggested payments
         const suggestions = trip.suggestedPayments.map(suggestion => ({
+            fromMemberFullname: suggestion.fromMemberFullname,
             fromMemberUsername: suggestion.fromMemberUsername,
             toMemberUsername: suggestion.toMemberUsername,
+            toMemberFullname: suggestion.toMemberFullname,
             fromMemberId: suggestion.fromMemberId,
             toMemberId: suggestion.toMemberId,
             amount: suggestion.amount,
         }));
 
+        console.log("----------------------------------------------------");
+        console.log(suggestions);
         res.status(200).json({ suggestions });
     } catch (error) {
         console.error("Error fetching trip suggestions:", error.message);
@@ -614,6 +639,37 @@ app.get("/tripSuggestions/:tripId", async (req, res) => {
 });
 
 
+// Notifications
+
+app.post("/invitations/:userId",authenticateToken, async (req,res)=>{
+    const { userId } = req.params;
+    const { notification } = req.body;
+    const tripId = notification.tripId;
+    console.log(req.body);
+    try{
+        const user = await users.findById(userId);
+        user.notifications.push(notification);
+        await user.save();
+    }catch(err){
+        console.log("Error adding notification");
+        console.log(err);
+    }
+});
+
+//Set UpiId
+
+app.post("/setUpi/:id",authenticateToken, async (req,res)=>{
+    const userId  = req.params.id;
+    const upiId = req.body.change.upi;
+    try{
+        const user = await users.findById(userId);
+        user.upiId = upiId;
+        await user.save();
+        res.status(200).json({message : "UPI id set success"});
+    }catch(err){
+        console.log(err);
+    }
+})
 
 
 

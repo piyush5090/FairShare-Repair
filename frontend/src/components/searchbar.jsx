@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const SearchBar = ({ setSearchQuery }) => {
   // Handle input change and update searchQuery state in the parent component
   const handleChange = (e) => {
