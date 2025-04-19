@@ -9,6 +9,7 @@ import { IoIosAddCircle } from "react-icons/io";
 import { IoPersonAddSharp } from "react-icons/io5";
 import axiosInstance from "../../utils/axiosInstance";
 import AddMembers from "./addMembersNew";
+import IndiMemberSkeleton from "./indiMemberSkeleton";
 
 
 const Members = () =>{
@@ -29,6 +30,7 @@ const Members = () =>{
     const handleUsers = () =>{
     setShowUsersModal(!showUserModal);
     }
+
 
     const isLongTripname = tripDetails?.tripname.length > 12;
 
@@ -106,23 +108,26 @@ const Members = () =>{
             )}
 
 
-        <div className="absolute flex flex-col w-full top-36 h-screen">
-            {tripDetails?.members.length > 0 ? (
-              tripDetails?.members.map((member, index) => (
-                <IndiMember
-                  key={member._id}
-                  index={index+1}
-                  member={member}
-                  username={member.username}
-                  fullname={member.fullname}
-                  totalSpend={member.totalSpend}
-                  email={member.email}
-                />
-              ))
-            ) : (
-              <p className="text-center text-gray-600 mt-6">No members yet...</p>
-            )}
-          </div>
+                    <div className="absolute flex flex-col w-full top-36 h-screen">
+                      {isLoading ? (
+                        Array.from({ length: 4 }).map((_, i) => <IndiMemberSkeleton key={i} />)
+                      ) : tripDetails?.members.length > 0 ? (
+                        tripDetails.members.map((member, index) => (
+                          <IndiMember
+                            key={member._id}
+                            index={index + 1}
+                            member={member}
+                            username={member.username}
+                            fullname={member.fullname}
+                            totalSpend={member.totalSpend}
+                            email={member.email}
+                          />
+                        ))
+                      ) : (
+                        <p className="text-center text-gray-600 mt-6">No members yet...</p>
+                      )}
+                    </div>
+
 
           <div className="fixed flex justify-center items-center bottom-0 w-full h-[62px] left-0 bg-gray-300 shadow-md">
       <div className="mx-2 flex flex-col justify-center items-center h-[140px] w-[80px] mb-3 gap-">

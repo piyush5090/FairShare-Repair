@@ -54,7 +54,7 @@ const ProfileCard = ({ handleProfile, onLogout, userInfo, getUserInfo }) => {
   return (
     <>
       <div className="fixed w-screen px-2 h-[210px] mt-[73px] items-center justify-center shadow-[0px_4px_4px_rgba(0,0,0,0.25)] z-40 inset-0 bg-black/30 backdrop-blur-sm">
-        <div className="w-full h-[200px] rounded-[11px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-gray-300" 
+        <div className="w-full h-[200px] rounded-[11px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-white" 
             ref={cardRef}
         >
           {/* Top section */}

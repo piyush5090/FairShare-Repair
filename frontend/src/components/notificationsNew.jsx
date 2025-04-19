@@ -1,6 +1,9 @@
 import axiosInstance from "../../utils/axiosInstance";
 import { useState, useEffect } from "react";
 import NotificationCard from "./notificationCard";
+import { BiMessageError } from "react-icons/bi";
+import NotificationSkeleton from "./notificationSkeleton";
+
 
 
 const Notifications = ({ userInfo,  handleBell, getUserInfo })=>{
@@ -21,14 +24,17 @@ const Notifications = ({ userInfo,  handleBell, getUserInfo })=>{
           </div>
 
           {/* Users section */}
-          <div className="w-full h-full mt-3 mb overflow-scroll">
+          <div className="w-full px-2 h-full mt-3 mb overflow-scroll">
             {userInfo.notifications?.length > 0 ? (
              userInfo.notifications.map((info, index)=>(
                 <NotificationCard userInfo={userInfo} info={info} getUserInfo={getUserInfo} handleBell={handleBell}/>
              ))   
                 
                     ) : (
-                    <p>No new notifications..</p>
+                    <div className="flex flex-col justify-center h-full items-center">
+                      <BiMessageError className="h-[60px] w-[60px] text-red-500"/>
+                      <p>No new notifications..</p>
+                    </div>
                     )}
             </div>
 

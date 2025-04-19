@@ -350,6 +350,32 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
     }
 });
 
+app.put("/reject/:id", authenticateToken, async(req,res)=>{
+    const currUser = req.body.currUser;
+    const _id = currUser._id;
+    const info = req.body.info;
+
+    try{
+        const user = await users.findById(_id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (info && info._id) {
+            console.log("Removingg");
+            user.notifications = user.notifications.filter(
+                n => n._id.toString() !== info._id.toString()
+            );
+            await user.save();
+            console.log(`Removed notification with ID: ${info._id}`);
+        }
+
+        res.status(200).json({message: "Notification removed"});
+    }catch(err){
+        //error
+    }
+})
+
 
 app.post('/:tripId/addSpend', authenticateToken, async (req, res) => {
     const { tripId } = req.params;
