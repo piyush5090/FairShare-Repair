@@ -150,6 +150,16 @@ app.get("/getUser", authenticateToken, async (req, res) => {
     });
   });
 
+  app.get("/getUser/:id", authenticateToken, async (req,res)=>{
+    const userId = req.params.id;
+    const isUser = await users.findById({ _id: userId});
+    if(!isUser) return res.sendStatus(400);
+    console.log(isUser);
+    return res.json({
+        upiId: isUser.upiId,
+    })
+  })
+
 
   app.post("/newTrip", authenticateToken, async (req, res) => {
     try {
@@ -519,6 +529,7 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
                 fromMemberUsername: owers[i].username,
                 toMemberFullname: receivers[j].fullname,
                 toMemberUsername: receivers[j].username,
+                upiId: receivers[j].upiId,
             });
 
             // Adjust balances
@@ -559,7 +570,8 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
             toMemberId: t.toMemberId,
             toMemberFullname: t.toMemberFullname,
             toMemberUsername: t.toMemberUsername,
-            amount: t.amount
+            amount: t.amount,
+            upiId: t.upiId,
         }));
 
         // Update the status of the trip to 'completed'

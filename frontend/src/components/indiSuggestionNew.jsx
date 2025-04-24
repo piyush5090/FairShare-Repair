@@ -1,7 +1,9 @@
 import { SiPhonepe } from "react-icons/si";
 import { SiPaytm } from "react-icons/si";
 import { FaGooglePay } from "react-icons/fa";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../utils/axiosInstance";
+
 
 
 
@@ -20,9 +22,27 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
     "#BEE1E6"  // light aqua
   ];
 
+  const[upiId,setUpiId]=useState(null);
+  const[isLoading,setIsLoading]=useState(false);
+
+  const getUser = async ()=>{
+    setIsLoading(true);
+    try{
+      const response = await axiosInstance.get(`/getUser/${toMemberId}`);
+      setUpiId(response.data.upiId);
+      console.log(response.data.upiId);
+    }catch(err){
+      console.log(err);
+    }finally{
+      setIsLoading(false);
+    }
+  }
+  
+
   useEffect(()=>{
-    console.log(fromMemberFullname);
-  })
+    getUser();
+    console.log(upiId);
+  },[])
 
   const avatarBgColor = avatarColors[index % avatarColors.length];
   const avatarBgColor2 = avatarColors[index * 2 % avatarColors.length];
@@ -31,6 +51,19 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
   const isLongFromMemberFullname = fromMemberFullname?.length > 15;
   const isLongToMemberFullname = toMemberFullname?.length > 13;
   // const isLongUsername = payment?.username.kength > 15;
+
+  const handlePay = () => {
+    if (!upiId || !amount === false) {
+      alert("User's UPI id not avaible");
+      return;
+    }
+
+    // Construct the UPI payment deep link
+    const url = `upi://pay?pa=${upiId}&pn=FairShare Payment&am=${amount}&cu=INR&tn=Payment for FairShare`;
+
+    // Redirect user to their UPI app to make the payment
+    window.location.href = url;
+  };
 
   return(
     <>
@@ -124,7 +157,9 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
         </div>
 
 
-        <div class="w-full flex gap-2 items-center justify-center mt-3 h-[45px] rounded-[20px] bg-indigo-200">
+        <div class="w-full flex gap-2 items-center justify-center mt-3 h-[45px] rounded-[20px] bg-indigo-200"
+          onClick={handlePay}
+        >
           <p class="text-[rgb(55,65,81)] flex font-[Montserrat] text-[16px] font-medium leading-[24px] tracking-[0px] text-left">
               Pay via UPI
           </p>

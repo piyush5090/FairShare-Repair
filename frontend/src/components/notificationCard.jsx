@@ -61,7 +61,7 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
         info: info,
       });
       getUserInfo();
-      handleBell();
+      // handleBell();
     } catch (err) {
       console.error(err);
     } finally {
