@@ -23,12 +23,16 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
   ];
 
   const[upiId,setUpiId]=useState(null);
+  const[user,setUser]=useState(null);
   const[isLoading,setIsLoading]=useState(false);
 
   const getUser = async ()=>{
     setIsLoading(true);
     try{
       const response = await axiosInstance.get(`/getUser/${toMemberId}`);
+      const res = await axiosInstance.get("/getUser");
+      console.log(res.data.user);
+      setUser(res.data.user);
       setUpiId(response.data.upiId);
       console.log(response.data.upiId);
     }catch(err){
@@ -157,16 +161,23 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
         </div>
 
 
-        <div class="w-full flex gap-2 items-center justify-center mt-3 h-[45px] rounded-[20px] bg-indigo-200"
-          onClick={handlePay}
-        >
-          <p class="text-[rgb(55,65,81)] flex font-[Montserrat] text-[16px] font-medium leading-[24px] tracking-[0px] text-left">
-              Pay via UPI
-          </p>
-          <SiPhonepe />
-          <SiPaytm className="h-[30px] w-[30px]"/>
-          <FaGooglePay className="h-[35px] w-[35px]"/>
-        </div>
+                <button
+                    className={`w-full flex gap-2 items-center justify-center mt-3 h-[45px] rounded-[20px] 
+                    ${user?.username !== fromMemberUsername 
+                    ? 'bg-gray-300 cursor-not-allowed' 
+                    : 'bg-indigo-200 hover:bg-indigo-300'}
+                 `}
+                  onClick={handlePay}
+                  disabled={user?.username !== fromMemberUsername}
+                >
+                <p className="text-[rgb(55,65,81)] flex font-[Montserrat] text-[16px] font-medium leading-[24px] tracking-[0px] text-left">
+                  Pay via UPI
+                </p>
+                <SiPhonepe />
+                <SiPaytm className="h-[30px] w-[30px]" />
+                <FaGooglePay className="h-[35px] w-[35px]" />
+              </button>
+
 
 
     </div>
