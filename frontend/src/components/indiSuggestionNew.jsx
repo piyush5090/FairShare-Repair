@@ -42,7 +42,7 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
   useEffect(()=>{
     getUser();
     console.log(upiId);
-  },[])
+  },[upiId])
 
   const avatarBgColor = avatarColors[index % avatarColors.length];
   const avatarBgColor2 = avatarColors[index * 2 % avatarColors.length];
