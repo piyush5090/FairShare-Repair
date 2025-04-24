@@ -53,13 +53,13 @@ const IndiSuggetion = ( { fromMemberId, toMemberId,index, fromMemberFullname, fr
   // const isLongUsername = payment?.username.kength > 15;
 
   const handlePay = () => {
-    if (!upiId || !amount === false) {
-      alert("User's UPI id not avaible");
+    if (!upiId || upiId.trim() === "" || !amount || amount <= 0) {
+      alert("Missing UPI ID or amount.");
       return;
     }
 
     // Construct the UPI payment deep link
-    const url = `upi://pay?pa=${upiId}&pn=FairShare Payment&am=${amount}&cu=INR&tn=Payment for FairShare`;
+    const url = `upi://pay?pa=${upiId}&pn=FairShare%20Payment&am=${amount}&cu=INR&tn=Payment%20for%20FairShare`;
 
     // Redirect user to their UPI app to make the payment
     window.location.href = url;
