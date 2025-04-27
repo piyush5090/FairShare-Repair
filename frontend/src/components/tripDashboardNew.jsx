@@ -55,7 +55,7 @@ const TripsDashboard = () => {
     <>
       <Navbar back={back} />
 
-      <div className="flec flec-col ">
+      <div className="flex flex-col ">
         {/* Header section(trip details) */}
             {showForm && (
           <div className="fixed insert-0 z-20 backdrop-blur-lg bg-black/20 pointer-events-none"></div>
@@ -94,7 +94,7 @@ const TripsDashboard = () => {
   </div>
 ) : (
 
-        <div className="absolute flex flex-col w-full top-32 h-screen">
+        <div className="flex flex-col w-full mt-32 mb-20 h-full gap-4 overflow-scroll">
             {filteredTrips.length > 0 ? (
               filteredTrips.map((trip,index) => (
                 <IndiTrip 
@@ -103,6 +103,7 @@ const TripsDashboard = () => {
                   tripId = {trip._id}
                   tripname = {trip.tripname}
                   createdAt = {trip.createdAt}
+                  admin = {trip.admin}
                 />
               ))
             ) : (
@@ -112,7 +113,9 @@ const TripsDashboard = () => {
       )}
       
       {showForm && (
-        <CreateTripForm cancelForm={cancelForm} getAllTrips={getAllTrips} />
+        <div className="fixed inset-0 z-30 flex items-center justify-center">
+              <CreateTripForm cancelForm={cancelForm} getAllTrips={getAllTrips} />
+        </div>
       )}
       
       <div className="fixed flex justify-center items-center bottom-0 w-full h-[62px] left-0 bg-gray-300 shadow-md">

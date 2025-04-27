@@ -1,45 +1,44 @@
-import axiosInstance from "../../utils/axiosInstance";
-import { useState, useEffect } from "react";
-import NotificationCard from "./notificationCard";
+import logo from '../assets/onlylogo.png';
+import NetworkMap from './networkMap';
 
-
-const AddMembers = ({tripData, getTripDetails, handleUsers})=>{
-
-    const[isLoading,setIsLoading]=useState(false);
-
+const Intro = () =>{
   return(
     <>
-      <div className="w-screen px-2 h-screen flex rounded-[33px] bg-[#f3fff6]">
-        <div className="fixed inset-0 flex p-3 flex-col items-center top-[50px] w-full h-[694px] border border-[#75b3f8] rounded-[33px] bg-[#f3fff6] shadow-[0px_4px_10px_rgba(0,0,0,0.25)] backdrop-blur-[50px] z-40">
-          {/* Heading */}
-          <div className="w-[328px] h-[47px] left-[8.7px] right-[9.05px] top-0 bottom-[-5px] text-[#7a7171] font-nunito text-[30px] font-extrabold leading-[41px] tracking-[0px] text-center">
-            Notifications
-          </div>
+    <div className="flex flex-col items-center gap-4">
 
-          {/* Users section */}
-          <div className="w-full h-full mt-3 mb overflow-scroll">
-            {/* {filteredUsers?.length > 0 ? (
-             filteredUsers.map((user, index)=>(
-                <IndiUser 
-                    key={user._id}
-                    user={user}
-                    username={user.username}
-                    fullname={user.fullname}
-                    email={user.email}
-                    tripData={tripData}
-                    index={index+1}
-                />
-             ))   
-                
-                    ) : (
-                    <p>No Users found...</p>
-                    )} */}
-            </div>
+      {/* title part */}
+      <div className='flex flex-col'>
+        <div className="flex items-center justify-center w-[296px] h-[92px] mt-8">
+          <div className="flex items-center justify-center w-[227px] h-[60px] rounded-[204px] bg-[rgba(196,196,196,0.39)]">
+            <div className='flex items-center gap-[5px]'> 
+              {/* logopart */}
+              <img
+                className="h-[50px] w-[50px]" 
+                src={logo}
+                alt="Your Logo"
+              />
+
+              {/* textpart */}
+              <div class="w-[132px] h-[38px] text-[rgb(55,65,81)] font-[Baumans] text-[32px] font-normal leading-[38px] tracking-[0px] text-left">
+                FairShare
+              </div>
+            </div> 
+          </div>
         </div>
+
+        {/* PunchLine */}
+          <div class="w-[296px] h-[23px] text-[rgb(55,65,81)] font-[comfortaa] text-[20px] font-normal leading-[22px] tracking-[0px] text-left">
+            Fair Spending - Fair Sharing
+          </div>
       </div>
 
+        <NetworkMap />
+
+      
+      
+    </div>
     </>
   );
 }
 
-export default AddMembers;
+export default Intro;

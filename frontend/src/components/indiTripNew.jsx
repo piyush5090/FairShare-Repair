@@ -3,13 +3,14 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-const IndiTrip = ({ tripname, tripId, createdAt, index }) => {
+const IndiTrip = ({ tripname, tripId, createdAt, index, admin }) => {
   const navigate = useNavigate();
 
   const [tripData, setTripData] = useState({
     TripId: tripId,
     Tripname: tripname,
     CreatedAt: createdAt,
+    Admin: admin,
   });
 
   
@@ -38,7 +39,7 @@ const IndiTrip = ({ tripname, tripId, createdAt, index }) => {
   return (
     <>
       <div
-        className="flex w-full max-w-2xl justify-between items-center mx-auto px-4 h-[80px] rounded-[14px] shadow-md bg-[rgba(196,196,196,0.1)] hover:bg-gray-200 mt-2 cursor-pointer"
+        className="flex w-full max-w-2xl justify-between items-center mx-auto px-4 h-[80px] rounded-[14px] shadow-md bg-[rgba(196,196,196,0.1)] hover:bg-gray-200 mt- cursor-pointer"
         onClick={handleClick}
       >
         <div className="flex justify-center items-center w-[55px] h-[55px] bg-[#E8E7E7] rounded-full">

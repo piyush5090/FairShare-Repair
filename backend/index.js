@@ -174,7 +174,8 @@ app.get("/getUser", authenticateToken, async (req, res) => {
   
       let newTrip = new trips({
         tripname: tripName,
-        createdAt: new Date().getTime(), 
+        createdAt: new Date().getTime(),
+        admin: iUser._id,
       });
   
       await newTrip.save();
@@ -183,9 +184,12 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         _id: newTrip._id,  
         tripname: newTrip.tripname,
         createdAt: newTrip.createdAt, 
-        status: newTrip.status
+        status: newTrip.status,
+        admin: newTrip.admin,
       });
       
+      
+
       await iUser.save();
   
       return res.json({
@@ -710,5 +714,87 @@ app.post("/setUpi/:id",authenticateToken, async (req,res)=>{
 })
 
 
+//Delete trip
+app.post("/deleteTrip/:id", authenticateToken, async (req, res) => {
+    const userId = req.params.id;
+    const trip = req.body.currTrip;
+  
+    console.log("trip", trip);
+  
+    try {
+      const user = await users.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
+      const iTrip = await trips.findById(trip._id);
+
+      if (user && user._id) {
+        console.log("Removingg");
+        iTrip.members = iTrip.members.filter(
+          n => n._id.toString() !== user._id.toString()
+        );
+        await iTrip.save();
+        console.log(`Removed trip with ID: ${user._id}`);
+      }
+  
+      if (trip && trip._id) {
+        console.log("Removingg");
+        user.trips = user.trips.filter(
+          n => n._id.toString() !== trip._id.toString()
+        );
+        await user.save();
+        console.log(`Removed trip with ID: ${trip._id}`);
+      }
+  
+      return res.status(200).json({ message: "Trip deleted successfully." });
+  
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+
+
+//   Delete admin
+app.delete("/deleteAdmin/:id", authenticateToken, async (req, res) => {
+    const tripId = req.params.id;
+    try {
+      const deletedTrip = await trips.findByIdAndDelete(tripId);
+  
+      if (!deletedTrip) {
+        return res.status(404).json({ message: "Trip not found" });
+      }
+  
+      console.log(`Trip ${tripId} deleted successfully`);
+      return res.status(200).json({ message: "Trip deleted successfully" });
+  
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+  
+  
+  //remove user from trip
+  app.post("/remove/:tripId", authenticateToken, async (req,res)=>{
+    const tripId = req.params.tripId;
+    const memberId = req.body.memberId;
+    console.log(tripId);
+    try{
+        const trip = await trips.findById(tripId);
+
+        if (memberId) {
+            console.log("Removingg");
+            trip.members = trip.members.filter(
+              n => n._id.toString() !== memberId.toString()
+            );
+            await trip.save();
+            console.log(`Removed user with ID: ${memberId}`);
+          }
+
+    }catch(err){
+        console.log(err);
+    }
+  })
 

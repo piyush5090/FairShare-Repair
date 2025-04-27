@@ -2,7 +2,9 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useState, useEffect } from "react";
 import NotificationCard from "./notificationCard";
 import { BiMessageError } from "react-icons/bi";
-import NotificationSkeleton from "./notificationSkeleton";
+import NotificationSkeleton from './notificationSkeleton';
+
+
 
 
 

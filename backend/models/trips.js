@@ -105,14 +105,16 @@ const tripSchema = new mongoose.Schema({
             toMemberId: { type: String, required: true },
             toMemberFullname: { type: String, required: true },
             toMemberUsername: { type: String, required: true },
-            amount: { type: Number, required: true }
+            amount: { type: Number, required: true },
+            upiId: { type: String},
         }
     ],
     // New status field, default is "ongoing"
     status: {
         type: String,
         enum: ['ongoing', 'completed'],
-    }
+    },
+    admin: {type: String},
 });
 
 // Create the trips model

@@ -37,7 +37,7 @@ const CreateTripForm = ( { cancelForm, getAllTrips })=>{
 
     return(
         <>
-        <div className="flex justify-center items-center h-[800px] backdrop-blur-[50px]">
+        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center">
       <div className="flex w-[342.11px] h-[216px] border border-[#75b3f8]  shadow-[0px_4px_4px_rgba(0,0,0,0.25)] backdrop-blur-[10px] rounded-[33px] bg-slate-300 p-4">
         <div className="flex flex-col justify-start items-center gap-4 w-full">
           <p className="text-[30px] leading-[41px] font-semibold text-gray-700 text-center font-[Nunito]">

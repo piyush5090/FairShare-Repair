@@ -20,6 +20,8 @@ const Members = () =>{
     const[tripDetails,setTripDetails] = useState(null);
     const[error,setError]=useState(null);
     const[showUserModal,setShowUsersModal]=useState(false);
+    const[user,setUser]=useState(null);
+
 
     const { tripData } = location.state || {};
 
@@ -40,6 +42,8 @@ const Members = () =>{
         try{
             const _id = tripData.TripId;
             const response = await axiosInstance.get(`/getTrip/${_id}`);
+            const res = await axiosInstance.get("/getUser");
+            setUser(res.data.user);
             console.log(response);
             setTripDetails(response.data);
         }catch(err){    
@@ -59,7 +63,6 @@ const Members = () =>{
         month: "short",
         year: "numeric",
       });
-
       
 
 
@@ -108,7 +111,7 @@ const Members = () =>{
             )}
 
 
-                    <div className="absolute flex flex-col w-full top-36 h-screen">
+                    <div className="absolute flex flex-col gap-3  w-full top-36 h-screen">
                       {isLoading ? (
                         Array.from({ length: 4 }).map((_, i) => <IndiMemberSkeleton key={i} />)
                       ) : tripDetails?.members.length > 0 ? (
@@ -121,6 +124,10 @@ const Members = () =>{
                             fullname={member.fullname}
                             totalSpend={member.totalSpend}
                             email={member.email}
+                            tripData={tripData}
+                            memberId={member._id}
+                            user={user}
+                            getTripDetails={getTripDetails}
                           />
                         ))
                       ) : (

@@ -15,6 +15,9 @@ import { FcAbout } from "react-icons/fc";
 import { RxCrossCircled } from "react-icons/rx";
 import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
+import DeleteTrip from "./deleteTrip";
+import DeleteTripAdmin from "./deleteTripAdmin";
+
 
 
 
@@ -28,6 +31,9 @@ const IndiTripDashboard = () => {
   const [members, setMembers] = useState([]);
   const [showAddSpend, setShowAddSpend] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
+  const[user,setUser]=useState(null);
+  const[showDelete,setShowDelete]=useState(false);
+  const[adminDelete,setAdminDelete]=useState(false);
   
 
   const {tripData} = location.state || {};
@@ -45,6 +51,9 @@ const IndiTripDashboard = () => {
     try {
       const _id = tripData.TripId;
       const response = await axiosInstance.get(`/getTrip/${_id}`);
+      const userRes = await axiosInstance.get("/getUser");
+      console.log("User data",userRes.data.user);
+      setUser(userRes.data.user);
       console.log(response);
       setCurrTrip(response.data);
       setMembers(response.data.members);
@@ -55,10 +64,38 @@ const IndiTripDashboard = () => {
     }
   };
 
+  const handleDelete = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axiosInstance.post(`/deleteTrip/${user._id}`, { currTrip });
+      navigate("/tripsDashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete trip!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleDeleteAdmin = async () => {
+    setIsLoading(true);
+    try {
+      const res1 = await axiosInstance.post(`/deleteTrip/${user._id}`, { currTrip });
+      const res = await axiosInstance.delete(`/deleteAdmin/${tripData.TripId}`);
+      console.log(res.data.message);  
+      navigate("/tripsDashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete Admin trip!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
   useEffect(() => {
-    console.log(tripData);
     getTrip();
-    console.log(currTrip);
+    console.log(tripData);
   }, []);
 
   useEffect(() => {
@@ -90,6 +127,11 @@ const IndiTripDashboard = () => {
   const handleSettle = () =>{
     navigate("/suggestions", { state: { tripId: currTrip?._id } });
   }
+
+
+  const handleDeleteClick = tripData.Admin === user?._id
+  ? () => setAdminDelete(true)
+  : () => setShowDelete(true);
 
   return (
     <>
@@ -158,7 +200,9 @@ const IndiTripDashboard = () => {
 
           <div className="flex h-[65px] w-full items-end justify-center gap-1 ">
             <div className="h-[65px] flex flex-col w-full items-center justify-center">
-                <MdDeleteOutline className="h-[32px] w-[32px] text-red-700"/>
+                <MdDeleteOutline className="h-[32px] w-[32px] text-red-700"
+                  onClick={handleDeleteClick}
+                />
                 <p className="text-[12px] font-bold">Delete</p>
               </div>
               
@@ -196,19 +240,7 @@ const IndiTripDashboard = () => {
         </div>
 
         
-      </div>
-      
-      
-
-
-
-        
-
-
-        
-
-        
-          
+      </div>          
 
           <div className="absolute flex flex-col w-full top-36 h-screen">
             
@@ -225,6 +257,13 @@ const IndiTripDashboard = () => {
       )}
 
       {showEnd && <EndTrip handleEnd={handleEnd} currTrip={currTrip} />}
+      {showDelete && <DeleteTrip handleDelete={handleDelete} setShowDelete={setShowDelete} userId={user._id}
+        isLoading={isLoading}
+      />}
+      {adminDelete && <DeleteTripAdmin handleDeleteAdmin={handleDeleteAdmin} setShowDelete={setAdminDelete} userId={user._id}
+        isLoading={isLoading}
+      />}
+
 
       <div className="fixed flex justify-between items-center bottom-0 w-full h-[66px] left-0 bg-gray-300 shadow-md">
 

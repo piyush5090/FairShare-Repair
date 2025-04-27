@@ -13,6 +13,8 @@ export default {
         lexend: ['Lexend Deca', 'sans-serif'],
         sans: ['Inter', 'Lexend Deca', 'sans-serif'],
         montserrat: ['Montserrat', 'sans-serif'],
+        baumans: ['Baumans', 'cursive'],
+        comfortaa: ['Comfortaa', 'cursive'],
       },
       
       colors: {

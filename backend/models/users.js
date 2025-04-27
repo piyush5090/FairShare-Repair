@@ -52,7 +52,8 @@ const userSchema = new mongoose.Schema({
                 type: String,
                 enum: ['ongoing', 'completed'], // Possible status values
                 default: 'ongoing',  // Default to 'ongoing'
-            }
+            },
+            admin:{type: String},
         }
     ],
     notifications: [
@@ -69,7 +70,7 @@ const userSchema = new mongoose.Schema({
             },
         }
     ],
-    upiId : {type : String}
+    upiId : {type : String},
 });
 
 const users = mongoose.model("Users", userSchema);
