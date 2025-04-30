@@ -26,6 +26,9 @@ import History from './components/paymentistoryNew';
 import Members from './components/membersNew';
 import Suggestions from './components/debtSuggestionNew';
 import IndiSuggetion from './components/test';
+import { TripsProvider } from './contexts/TripsContext';
+import { UserProvider } from './contexts/UserContext';
+
 
 function AppRedirector({ setIsReady }) {
   const navigate = useNavigate();
@@ -77,7 +80,11 @@ function MainApp() {
     <Router>
       <AppRedirector setIsReady={setIsReady} />
       {isReady ? (
-        <AppRoutes />
+        <UserProvider>
+            <TripsProvider> {/* ✅ Wrap your AppRoutes inside TripsProvider */}
+                <AppRoutes />
+          </TripsProvider>
+        </UserProvider> 
       ) : (
         <div className="w-screen h-screen flex flex-col justify-center items-center bg-white">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>

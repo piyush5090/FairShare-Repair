@@ -3,6 +3,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+
 const IndiTrip = ({ tripname, tripId, createdAt, index, admin }) => {
   const navigate = useNavigate();
 

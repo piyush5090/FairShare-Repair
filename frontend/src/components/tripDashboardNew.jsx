@@ -8,27 +8,38 @@ import { useNavigate } from "react-router-dom";
 import { IoIosAddCircle } from "react-icons/io";
 import BottomNavbar from "./bottomNavbar";
 import CreateTripForm from "./createTripForm";
+import { useTrips } from "../contexts/TripsContext";
 
 
 
 const TripsDashboard = () => {
 
-  const [trips,setTrips] = useState([]);
+  // const [trips,setTrips] = useState([]);
   const [statusFilter,setStatusFilter] = useState('all');
   const [isLoading,setLoading] = useState(false);
   const navigate = useNavigate();
   const [showForm,setShowForm] = useState(false);
+  const{trips, getAllTrips, isAllTripsLoading} = useTrips();
+  const[started,setStarted]=useState(false);
 
-  const getAllTrips = async () =>{
-    setLoading(true);
-      try{
-        const res = await axiosInstance.get("/getAllTrips");
-        setTrips(res.data);
-        setLoading(false);
-      }catch(err){
-        setLoading(false);
-      }
-  };
+  useEffect(()=>{
+    if(!started){
+      getAllTrips();
+      setStarted(true);
+    }
+  },[]);
+
+  // const getAllTrips = async () =>{
+  //   setLoading(true);
+  //     try{
+  //       const res = await axiosInstance.get("/getAllTrips");
+  //       setTrips(res.data);
+  //       setLoading(false);
+  //       setfetch(true);
+  //     }catch(err){
+  //       setLoading(false);
+  //     }
+  // };
 
   const handleForm =()=>{
     setShowForm(true);
@@ -38,9 +49,9 @@ const TripsDashboard = () => {
     setShowForm(false);
   }
 
-  useEffect(()=>{
-    getAllTrips();
-  },[]);
+  // useEffect(()=>{
+  //   getAllTrips();
+  // },[]);
 
   const filteredTrips = trips.filter((trip)=>{
     // const matchesSearch = trip.tripname.toLowerCase().includes(searchQuery.toLowerCase());

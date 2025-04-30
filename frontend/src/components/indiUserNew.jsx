@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
+import { currUser } from "../contexts/UserContext";
 
 const IndiUser = ({index,member, key,user, fullname, tripData, totalSpend, username, email  }) =>{
 
@@ -21,24 +22,27 @@ const IndiUser = ({index,member, key,user, fullname, tripData, totalSpend, usern
     const isLongFullname = fullname?.length > 20;
     const[isLoading,setIsLoading]=useState(false);
     const[invited,setInvited] = useState(false);
-    const[currUser,setCurrUser]=useState(null);
+    // const[currUser,setCurrUser]=useState(null);
+    const {userInfo, isUserLoading, getUser} = currUser();
 
-    const getUser = async () =>{
-      setIsLoading(true);
-      try{
-        const res = await axiosInstance.get("/getUser");
-        setCurrUser(res.data.user);
-      }catch(err){
-        console.log(err);
-      }finally{
-        setIsLoading(false);
-      }  
-    }
+    
+
+    // const getUser = async () =>{
+    //   setIsLoading(true);
+    //   try{
+    //     const res = await axiosInstance.get("/getUser");
+    //     setCurrUser(res.data.user);
+    //   }catch(err){
+    //     console.log(err);
+    //   }finally{
+    //     setIsLoading(false);
+    //   }  
+    // }
 
     const notification = {
-      fromId : currUser?._id,
-      fromUsername : currUser?.username,
-      fromFullname : currUser?.fullname,
+      fromId : userInfo?._id,
+      fromUsername : userInfo?.username,
+      fromFullname : userInfo?.fullname,
       message : `invited you to join the group
         trip ${tripData?.Tripname}.`,
       tripId : tripData.TripId,
@@ -59,9 +63,9 @@ const IndiUser = ({index,member, key,user, fullname, tripData, totalSpend, usern
       }
     }
 
-    useEffect(()=>{
-      getUser();
-    },[])
+    // useEffect(()=>{
+    //   getUser();
+    // },[])
   
     return(
       <>

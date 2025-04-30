@@ -40,7 +40,8 @@ const userSchema = new mongoose.Schema({
                 type: String,
             },
             createdAt: {
-                type: String,
+                type: Date,
+                default: Date.now,
             },
             // Optional: field to track how much is owed in this trip
             amountOwed: {

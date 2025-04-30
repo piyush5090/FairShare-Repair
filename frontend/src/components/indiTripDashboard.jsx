@@ -17,6 +17,8 @@ import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
 import DeleteTrip from "./deleteTrip";
 import DeleteTripAdmin from "./deleteTripAdmin";
+import { useTrips } from "../contexts/TripsContext";
+import { currUser } from "../contexts/UserContext";
 
 
 
@@ -31,9 +33,11 @@ const IndiTripDashboard = () => {
   const [members, setMembers] = useState([]);
   const [showAddSpend, setShowAddSpend] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
-  const[user,setUser]=useState(null);
+  // const[user,setUser]=useState(null);
   const[showDelete,setShowDelete]=useState(false);
   const[adminDelete,setAdminDelete]=useState(false);
+  const{trips, getAllTrips, isAllTripsLoading} = useTrips();
+  const {userInfo, isUserLoading, getUser} = currUser();
   
 
   const {tripData} = location.state || {};
@@ -51,9 +55,6 @@ const IndiTripDashboard = () => {
     try {
       const _id = tripData.TripId;
       const response = await axiosInstance.get(`/getTrip/${_id}`);
-      const userRes = await axiosInstance.get("/getUser");
-      console.log("User data",userRes.data.user);
-      setUser(userRes.data.user);
       console.log(response);
       setCurrTrip(response.data);
       setMembers(response.data.members);
@@ -64,11 +65,22 @@ const IndiTripDashboard = () => {
     }
   };
 
+  // const getUser = async () =>{
+  //   try{
+  //     const userRes = await axiosInstance.get("/getUser");
+  //     console.log("User data",userRes.data.user);
+  //     setUser(userRes.data.user);
+  //   }catch(err){
+  //     console.log(err);
+  //   }
+  // }
+
   const handleDelete = async () => {
     setIsLoading(true);
     try {
       const res = await axiosInstance.post(`/deleteTrip/${user._id}`, { currTrip });
       navigate("/tripsDashboard");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       alert("Failed to delete trip!");
@@ -84,6 +96,7 @@ const IndiTripDashboard = () => {
       const res = await axiosInstance.delete(`/deleteAdmin/${tripData.TripId}`);
       console.log(res.data.message);  
       navigate("/tripsDashboard");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       alert("Failed to delete Admin trip!");
@@ -95,6 +108,7 @@ const IndiTripDashboard = () => {
 
   useEffect(() => {
     getTrip();
+    // getUser();
     console.log(tripData);
   }, []);
 
@@ -129,7 +143,7 @@ const IndiTripDashboard = () => {
   }
 
 
-  const handleDeleteClick = tripData.Admin === user?._id
+  const handleDeleteClick = tripData.Admin === userInfo?._id
   ? () => setAdminDelete(true)
   : () => setShowDelete(true);
 
@@ -257,10 +271,10 @@ const IndiTripDashboard = () => {
       )}
 
       {showEnd && <EndTrip handleEnd={handleEnd} currTrip={currTrip} />}
-      {showDelete && <DeleteTrip handleDelete={handleDelete} setShowDelete={setShowDelete} userId={user._id}
+      {showDelete && <DeleteTrip handleDelete={handleDelete} setShowDelete={setShowDelete} userId={userInfo._id}
         isLoading={isLoading}
       />}
-      {adminDelete && <DeleteTripAdmin handleDeleteAdmin={handleDeleteAdmin} setShowDelete={setAdminDelete} userId={user._id}
+      {adminDelete && <DeleteTripAdmin handleDeleteAdmin={handleDeleteAdmin} setShowDelete={setAdminDelete} userId={userInfo._id}
         isLoading={isLoading}
       />}
 

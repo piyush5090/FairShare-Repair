@@ -9,33 +9,35 @@ import logo from '../assets/onlylogo.png';
 import ProfileCard from "./profileCard";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import Notifications from "./notificationsNew";
+import { currUser } from "../contexts/UserContext";
 
 
 const Navbar = ( {back} ) => {
-    const [userInfo, setUserInfo] = useState(null);
+    // const [userInfo, setUserInfo] = useState(null);
     const [loading, setLoading] = useState(false); // Add a loading state
     const navigate = useNavigate();
     const navbarRef = useRef(null);
     const[showProfile,setShowProfile]=useState(false);
     const[showNotifications,setShowNotifications]=useState(false);
+    const {userInfo, isUserLoading, getUser} = currUser();
 
-    const getUserInfo = async () => {
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get("/getUser");
-            if (response.data && response.data.user) {
-                setUserInfo(response.data.user);
-            }
-            setFetched(true);
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                localStorage.clear();
-                navigate("/");
-            }
-        } finally {
-            setLoading(false); // Set loading to false when the request finishes
-        }
-    };
+    // const getUserInfo = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await axiosInstance.get("/getUser");
+    //         if (response.data && response.data.user) {
+    //             setUserInfo(response.data.user);
+    //         }
+    //         setFetched(true);
+    //     } catch (error) {
+    //         if (error.response && error.response.status === 401) {
+    //             localStorage.clear();
+    //             navigate("/");
+    //         }
+    //     } finally {
+    //         setLoading(false); // Set loading to false when the request finishes
+    //     }
+    // };
 
     const NotificationIcon = ({ count, onClick }) => (
         <div className="relative w-fit cursor-pointer" onClick={onClick}>
@@ -55,7 +57,8 @@ const Navbar = ( {back} ) => {
     };
 
     useEffect(() => {
-        getUserInfo(); // Fetch user info when the component mounts
+        getUser();
+        // getUserInfo(); // Fetch user info when the component mounts
     }, []);
 
     const handleBack = () =>{
@@ -113,8 +116,8 @@ const Navbar = ( {back} ) => {
             </div>
         </div>
 
-                {showProfile && <ProfileCard handleProfile={handleProfile} onLogout={onLogout} userInfo={userInfo} getUserInfo={getUserInfo} />}
-                {showNotifications && <Notifications onClick={handleBell} userInfo={userInfo} handleBell={handleBell} getUserInfo={getUserInfo}/> }
+                {showProfile && <ProfileCard handleProfile={handleProfile} onLogout={onLogout} userInfo={userInfo} getUserInfo={getUser} />}
+                {showNotifications && <Notifications onClick={handleBell} userInfo={userInfo} handleBell={handleBell} getUserInfo={getUser}/> }
 
         </>
     );

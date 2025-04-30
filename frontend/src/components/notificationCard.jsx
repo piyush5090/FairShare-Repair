@@ -34,12 +34,13 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
           tripData: {
             TripId: info.tripId,
             Tripname: trip?.tripname,
-            CreatedAt: trip?.CreatedAt,
+            CreatedAt: trip?.createdAt,
           },
           info: info,
         });
         getUserInfo();
         handleBell();
+        window.location.reload();
         console.log(response.data);
       } catch (err) {
         console.error(err);

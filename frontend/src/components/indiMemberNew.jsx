@@ -30,6 +30,7 @@ const IndiMember = ({index,member,  fullname, totalSpend, username,memberId, ema
           const res = await axiosInstance.post(`/remove/${tripData.TripId}`,{ memberId });
           console.log(res);
           getTripDetails();
+          window.location.reload();
         }catch(err){
           console.log(err);
         }finally{

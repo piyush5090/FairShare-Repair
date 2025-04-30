@@ -10,6 +10,7 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import axiosInstance from "../../utils/axiosInstance";
 import AddMembers from "./addMembersNew";
 import IndiMemberSkeleton from "./indiMemberSkeleton";
+import { currUser } from "../contexts/UserContext";
 
 
 const Members = () =>{
@@ -20,10 +21,11 @@ const Members = () =>{
     const[tripDetails,setTripDetails] = useState(null);
     const[error,setError]=useState(null);
     const[showUserModal,setShowUsersModal]=useState(false);
-    const[user,setUser]=useState(null);
+    // const[user,setUser]=useState(null);
 
 
     const { tripData } = location.state || {};
+    const {userInfo, isUserLoading, getUser} = currUser();
 
     const back = () =>{
         navigate(-1);
@@ -42,8 +44,8 @@ const Members = () =>{
         try{
             const _id = tripData.TripId;
             const response = await axiosInstance.get(`/getTrip/${_id}`);
-            const res = await axiosInstance.get("/getUser");
-            setUser(res.data.user);
+            // const res = await axiosInstance.get("/getUser");
+            // setUser(res.data.user);
             console.log(response);
             setTripDetails(response.data);
         }catch(err){    
@@ -126,7 +128,7 @@ const Members = () =>{
                             email={member.email}
                             tripData={tripData}
                             memberId={member._id}
-                            user={user}
+                            user={userInfo}
                             getTripDetails={getTripDetails}
                           />
                         ))
