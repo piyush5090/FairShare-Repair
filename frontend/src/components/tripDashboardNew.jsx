@@ -85,7 +85,7 @@ const TripsDashboard = () => {
 
     
 
-      {isLoading ? (
+      {isAllTripsLoading ? (
   <div className="flex flex-col gap-4 mt-32 px-4">
     {Array.from({ length: 6 }).map((_, i) => (
       <div

@@ -131,7 +131,7 @@ const IndiTripDashboard = () => {
 
   const handleHistory = () =>{
     console.log(currTrip);
-    navigate("/payHistory", { state: { tripId : currTrip?._id }});
+    navigate("/payHistory", { state: { tripData : tripData }});
   }
 
   const handleMembers = () =>{

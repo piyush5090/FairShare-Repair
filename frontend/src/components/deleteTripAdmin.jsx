@@ -9,14 +9,14 @@ const DeleteTripAdmin = ({ handleDeleteAdmin, userId, currTrip, setShowDelete, i
       <>
       <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center"></div>
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="flex items-center flex-col gap-4 w-[342px] h-[200px] border border-[#75B3F8] rounded-[33px] bg-slate-300">
+          <div className="flex items-center flex-col gap-4 w-[342px] h-[240px] border border-[#75B3F8] rounded-[33px] bg-slate-300">
             {isLoading ? (
                 <p className="w-[335px] h-[91px] mt-4 text-black font-nunito text-[20px] font-semiabold leading-[41px] text-center">
                   Deleting
                 </p>
             ) : (
-              <p className="w-[335px] h-[91px] mt-4 text-[rgb(248,51,51)] font-nunito text-[26px] font-semiabold leading-[41px] text-center">
-                You are Admin <br />if you delete the trip, it will be deletd from all members
+              <p className="w-[335px] h-[130px] mt-4 text-[rgb(248,51,51)] font-nunito text-[22px] font-semiabold leading-[41px] text-center">
+                You are Trip Admin <br />if you delete the trip, it will be deletd from all members
               </p>
             )}
 

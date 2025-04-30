@@ -10,12 +10,12 @@ import TripDetailsSkeleton from "./tripDetailsSkeleton";
 const History = () => {
   const location = useLocation();
   const [paymentHistory, setPaymentHistory] = useState([]);
-  const [tripDetails, setTripDetails] = useState(null);
+  // const [tripDetails, setTripDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const { tripId } = location.state || {};
+  const { tripData } = location.state || {};
 
   const back = () => {
     navigate(-1);
@@ -24,14 +24,14 @@ const History = () => {
   const fetchPaymentHistory = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/${tripId}/paymentHistory`);
+      const response = await axiosInstance.get(`/${tripData.TripId}/paymentHistory`);
       const sortedPaymentHistory = response.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setPaymentHistory(sortedPaymentHistory);
 
-      const tripResponse = await axiosInstance.get(`/getTrip/${tripId}`);
-      setTripDetails(tripResponse.data);
+      // const tripResponse = await axiosInstance.get(`/getTrip/${tripId}`);
+      // setTripDetails(tripResponse.data);
     } catch (err) {
       setError(
         err.response?.data?.message || "Some unexpected error has occurred"
@@ -42,10 +42,11 @@ const History = () => {
   };
 
   useEffect(() => {
+    console.log(location.state);
     fetchPaymentHistory();
-  }, [tripId]);
+  }, [tripData]);
 
-  const formattedDate = new Date(tripDetails?.createdAt).toLocaleDateString(
+  const formattedDate = new Date(tripData?.CreatedAt).toLocaleDateString(
     "en-GB",
     {
       day: "2-digit",
@@ -54,7 +55,7 @@ const History = () => {
     }
   );
 
-  const isLongTripname = tripDetails?.tripname?.length > 11;
+  const isLongTripname = tripData?.Tripname?.length > 11;
 
   return (
     <>
@@ -67,15 +68,15 @@ const History = () => {
     <div className="w-[261px] flex items-center justify-start">
       <div className="ml-1 w-[50px] h-[50px] bg-gray-300 rounded-full flex justify-center items-center">
         <p className="text-[22px] font-nunito font-normal leading-[38px] text-[#374151]">
-          {tripDetails?.tripname?.charAt(0).toUpperCase()}
-          {tripDetails?.tripname?.charAt(tripDetails?.tripname?.length - 1).toUpperCase()}
+          {tripData?.Tripname?.charAt(0).toUpperCase()}
+          {tripData?.Tripname?.charAt(tripData?.Tripname?.length - 1).toUpperCase()}
         </p>
       </div>
       <div className="w-[200px] flex flex-col justify-center items-start">
         <p className="relative ml-2 top-[4px] text-[24px] font-nunito font-semibold italic leading-[48px] text-[#374151]">
           <div className={`scroll-marquee-wrapper ${isLongTripname ? "" : "overflow-visible"}`}>
             <span className={isLongTripname ? "scroll-marquee" : ""}>
-              {tripDetails?.tripname}
+              {tripData?.Tripname}
             </span>
           </div>
         </p>
