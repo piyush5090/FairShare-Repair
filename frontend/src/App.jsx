@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useNavigate,
   useLocation,
+  Navigate,
 } from 'react-router-dom';
 
 import './App.css';
@@ -29,24 +30,24 @@ import IndiSuggetion from './components/test';
 import { TripsProvider } from './contexts/TripsContext';
 import { UserProvider } from './contexts/UserContext';
 
-
 function AppRedirector({ setIsReady }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  useLayoutEffect(() => {
+    const token = localStorage.getItem('token');
 
-    if (location.pathname === "/") {
-      if (token) {
-        navigate("/dashboard", { replace: true });
-      } else {
-        navigate("/intro", { replace: true });
+    // wait until hydration is complete
+    setTimeout(() => {
+      if (location.pathname === '/') {
+        if (token) {
+          navigate('/dashboard', { replace: true });
+        } else {
+          navigate('/intro', { replace: true });
+        }
       }
-    }
-
-    // Once redirection logic is complete, update isReady to show the app
-    setIsReady(true);
+      setIsReady(true);
+    }, 50); // slight delay ensures full mount
   }, [location, navigate, setIsReady]);
 
   return null;
@@ -55,6 +56,7 @@ function AppRedirector({ setIsReady }) {
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/signup" element={<SignupForm />} />
       <Route path="/dashboard" element={<Dashboard />} />
@@ -81,14 +83,14 @@ function MainApp() {
       <AppRedirector setIsReady={setIsReady} />
       {isReady ? (
         <UserProvider>
-            <TripsProvider> {/* ✅ Wrap your AppRoutes inside TripsProvider */}
-                <AppRoutes />
+          <TripsProvider>
+            <AppRoutes />
           </TripsProvider>
-        </UserProvider> 
+        </UserProvider>
       ) : (
         <div className="w-screen h-screen flex flex-col justify-center items-center bg-white">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-blue-600 text-sm">Checking login status...</p>
+          <p className="mt-4 text-blue-600 text-sm">Loading app...</p>
         </div>
       )}
     </Router>
