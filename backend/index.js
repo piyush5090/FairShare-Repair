@@ -17,10 +17,22 @@ app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // app.use(cors());    
-app.use(cors({
-    origin: 'http://localhost:5173', // 👈 specific domain, not '*'
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://fair-share-2.vercel.app'
+  ];
+  
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   }));
+  
 const bcrypt = require('bcryptjs');
 const { authenticateToken } = require('./utilities.js');
 //const { default: axiosInstance } = require('../frontend/utils/axiosInstance.js');
