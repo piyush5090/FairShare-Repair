@@ -192,6 +192,7 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         tripname: tripName,
         createdAt: new Date().getTime(),
         admin: iUser._id,
+        status: 'ongoing',
       });
   
       await newTrip.save();
@@ -200,7 +201,7 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         _id: newTrip._id,  
         tripname: newTrip.tripname,
         createdAt: newTrip.createdAt, 
-        status: newTrip.status,
+        status: 'ongoing',
         admin: newTrip.admin,
       });
       

@@ -45,15 +45,20 @@ const Dashboard = () =>{
                     style={{backgroundImage: `url(${groupBg})`}} onClick={onGroupClick}
                 >
                     <div className="absolute inset-0 bg-white bg-opacity-55"></div>
-
-                    <div className="relative flex items-end py-4 justify-around w-full">
-                    <p className="relative w-[255px] h-[66px] left-[17px] right-[94px] bottom-[30px] 
-                        text-[#451a03] font-nunito text-[18px] font-extrabold italic leading-[25px] text-left"
-                            // style={{fontFamily: "Nunito, sans-serif"}}
-                        >
-                                Living with roommates? Manage shared expenses hassle-free!
-                    </p>
-                    <IoArrowForwardCircleOutline className="relative w-[65px] mb-6 h-[65px] text-[#451a03]" onClick={onGroupClick}/>
+                    
+                    <div className="relative flex flex-col items-end gap-20 w-full">
+                    <div className="relative mb- h-[25px] rounded-b-[10px] w-[150px] bg-blue-400"> 
+                        <p className="text-white font-[nunito]">Upcoming....</p>
+                    </div>
+                    <div className="flex ">
+                        <p className="w-[255px] h-[66px]
+                            text-[#451a03] font-nunito text-[18px] font-extrabold italic leading-[25px] text-left"
+                                // style={{fontFamily: "Nunito, sans-serif"}}
+                            >
+                                    Living with roommates? Manage shared expenses hassle-free!
+                        </p>
+                        <IoArrowForwardCircleOutline className="relative w-[65px] mb-6 mr-3 h-[65px] text-[#451a03]" onClick={onGroupClick}/>
+                    </div>
                     </div>
                 </div>
 

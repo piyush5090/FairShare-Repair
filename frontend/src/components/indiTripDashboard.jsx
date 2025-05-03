@@ -78,7 +78,7 @@ const IndiTripDashboard = () => {
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      const res = await axiosInstance.post(`/deleteTrip/${user._id}`, { currTrip });
+      const res = await axiosInstance.post(`/deleteTrip/${userInfo._id}`, { currTrip });
       navigate("/tripsDashboard");
       window.location.reload();
     } catch (err) {
@@ -92,7 +92,7 @@ const IndiTripDashboard = () => {
   const handleDeleteAdmin = async () => {
     setIsLoading(true);
     try {
-      const res1 = await axiosInstance.post(`/deleteTrip/${user._id}`, { currTrip });
+      const res1 = await axiosInstance.post(`/deleteTrip/${userInfo._id}`, { currTrip });
       const res = await axiosInstance.delete(`/deleteAdmin/${tripData.TripId}`);
       console.log(res.data.message);  
       navigate("/tripsDashboard");
@@ -222,8 +222,10 @@ const IndiTripDashboard = () => {
               
 
               <div className="h-[65px] flex flex-col w-full items-center justify-center pr-3">
-                <button onClick={handleSettle}> 
-                <MdOutlineTipsAndUpdates className="h-[32px] w-[32px] text-yellow-700 ml-[2px]"/>
+                <button onClick={handleSettle}
+                  disabled={currTrip?.status != 'completed'}
+                > 
+                <MdOutlineTipsAndUpdates className={`h-[32px] w-[32px] ${ currTrip?.status != "completed" ? "text-gray-400"  :"text-yellow-700"} ml-[2px]`}/>
                 <p className="text-[12px] font-bold">Settle!</p>
                 </button> 
                 
@@ -288,10 +290,12 @@ const IndiTripDashboard = () => {
           <p className="text-[14px]">About Us</p>
         </div>
 
-        <div className=" w-full h-[66px] flex flex-col items-center justify-center" >
-          <RxCrossCircled className="h-[32px] w-[32px] text-gray-600 " onClick={handleEnd} />
+        <button className=" w-full h-[66px] flex flex-col items-center justify-center" 
+          disabled={currTrip?.admin != userInfo?._id}
+        >
+          <RxCrossCircled className={`h-[32px] w-[32px] ${currTrip?.admin != userInfo?._id ? "text-gray-200" : "text-gray-600"}`} onClick={handleEnd} />
           <p className="text-[14px]">End</p>
-        </div>
+        </button>
 
         <div className="mx-2 flex flex-col justify-center items-center h-[140px] w-full mb-3 gap-">
             <div className="flex justify-center items-center h-[80px] w-[80px] rounded-full bg-[rgb(243,255,246)]">
