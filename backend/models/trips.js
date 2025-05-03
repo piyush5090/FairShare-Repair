@@ -113,7 +113,7 @@ const tripSchema = new mongoose.Schema({
     status: {
         type: String,
         // enum: ['ongoing', 'completed'],
-        default: ongoing,
+        default: 'ongoing',
     },
     admin: {type: String},
 });
