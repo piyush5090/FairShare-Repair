@@ -282,7 +282,9 @@ const IndiTripDashboard = () => {
       <div className="fixed flex justify-between items-center bottom-0 w-full h-[66px] left-0 bg-gray-300 shadow-md">
 
       <div className="ml-2 w-full h-[66px] flex flex-col text-center items-center justify-center">
-        <FcAbout className="h-[32px] w-[32px] text-gray-600  hover:text-purple-500"/>
+        <FcAbout className="h-[32px] w-[32px] text-gray-600  hover:text-purple-500"
+          onClick={()=>{navigate("/aboutUs")}}
+        />
           <p className="text-[14px]">About Us</p>
         </div>
 

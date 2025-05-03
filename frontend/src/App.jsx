@@ -29,6 +29,8 @@ import Suggestions from './components/debtSuggestionNew';
 import IndiSuggetion from './components/test';
 import { TripsProvider } from './contexts/TripsContext';
 import { UserProvider } from './contexts/UserContext';
+import AboutUs from './components/aboutUs';
+import Team from './components/team';
 
 function AppRedirector({ setIsReady }) {
   const navigate = useNavigate();
@@ -71,6 +73,8 @@ function AppRoutes() {
       <Route path='/payHistory' element={<History />} />
       <Route path='/members' element={<Members />} />
       <Route path='/suggestions' element={<Suggestions />} />
+      <Route path='/aboutUs' element={<AboutUs />} />
+      <Route path='/team' element={<Team />} />
     </Routes>
   );
 }

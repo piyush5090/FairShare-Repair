@@ -101,7 +101,9 @@ const Members = () =>{
                 </div>
                 
                 <div className="flex flex-col w-[60px] h-[65px] items-center justify-center">
-                    <FcAbout className="w-full h-[26px]"/>
+                    <FcAbout className="w-full h-[26px]"
+                      onClick={()=>{navigate("/aboutUs")}}
+                    />
                     <p className="text-[13px]">About us</p>
                 </div>
 

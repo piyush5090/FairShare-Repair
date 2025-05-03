@@ -15,6 +15,8 @@ export default {
         montserrat: ['Montserrat', 'sans-serif'],
         baumans: ['Baumans', 'cursive'],
         comfortaa: ['Comfortaa', 'cursive'],
+        shadows: ['"Shadows Into Light Two"', 'cursive'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       
       colors: {
