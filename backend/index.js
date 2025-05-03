@@ -16,7 +16,11 @@ const cors = require('cors');
 app.use(methodOverride("_method"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(cors());    
+// app.use(cors());    
+app.use(cors({
+    origin: 'http://localhost:5173', // 👈 specific domain, not '*'
+    credentials: true
+  }));
 const bcrypt = require('bcryptjs');
 const { authenticateToken } = require('./utilities.js');
 //const { default: axiosInstance } = require('../frontend/utils/axiosInstance.js');
