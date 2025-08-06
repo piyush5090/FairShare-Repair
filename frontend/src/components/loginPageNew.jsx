@@ -124,7 +124,6 @@ const LoginForm = () => {
       <button className="w-[205px] h-[53.83px] border border-blue-300 rounded-[67px] bg-blue-300 text-gray-100 font-lexend text-[24px] font-normal leading-[30px] flex justify-center items-center cursor-pointer hover:bg-blue-400 "
         type="submit"
         disabled={isLoading}
-        onClick={handleSubmit}
       >
         {isLoading ? "Logging in..." : "Submit"}
 
