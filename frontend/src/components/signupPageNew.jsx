@@ -109,6 +109,8 @@ const SignupForm = () =>{
                         type="email"
                         placeholder="Email"
                         id="Email"
+                        required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                         className="w-full ml-2 px-2 h-full outline-none bg-transparent rounded-r-3xl"
                         onChange={changeUSers}
                     />  
