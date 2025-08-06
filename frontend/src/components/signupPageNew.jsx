@@ -72,10 +72,10 @@ const SignupForm = () =>{
                 <img src={logo} className="relative h-[50px] w-[50px] my-[2px]"></img>
             </div>
 
-            <div className="flex justify-center mt-20">
-                <form className="relative h-[486px] w-[330px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3"
-                        onSubmit={handleSubmit}
-                    >
+            <form className="flex justify-center mt-20"
+                onSubmit={handleSubmit}
+            >
+                <div className="relative h-[486px] w-[330px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3">
                         <h2 className="text-teal-600  font-lexend text-[36px] font-normal leading-[45px]">
                             Signup
                         </h2>
@@ -112,7 +112,7 @@ const SignupForm = () =>{
                         placeholder="Email"
                         id="Email"
                         required
-                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                        // pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                         className="w-full ml-2 px-2 h-full outline-none bg-transparent rounded-r-3xl"
                         onChange={changeUSers}
                     />  
@@ -158,8 +158,8 @@ const SignupForm = () =>{
                 </div>
 
                 
-                </form>
-            </div>
+                </div>
+            </form>
         </>
     );
 }
