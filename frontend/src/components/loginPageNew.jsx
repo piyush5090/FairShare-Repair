@@ -77,7 +77,9 @@ const LoginForm = () => {
     <div className="flex justify-center items-center h-[800px]">
 
     
-    <div className="relative w-[330px] h-[363px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3">
+    <form className="relative w-[330px] h-[363px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3"
+            onSubmit={handleSubmit}
+        >
       {/* Login Heading */}
       <h2 className="text-teal-600  font-lexend text-[36px] font-normal leading-[45px]">
         Login
@@ -136,7 +138,7 @@ const LoginForm = () => {
             Create New Account
         </a>
       </div>
-    </div>
+    </form>
     </div>
     </>
   );
