@@ -73,7 +73,9 @@ const SignupForm = () =>{
             </div>
 
             <div className="flex justify-center mt-20">
-                <div className="relative h-[486px] w-[330px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3">
+                <form className="relative h-[486px] w-[330px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3"
+                        onSubmit={handleSubmit}
+                    >
                         <h2 className="text-teal-600  font-lexend text-[36px] font-normal leading-[45px]">
                             Signup
                         </h2>
@@ -141,7 +143,6 @@ const SignupForm = () =>{
                 <button className="w-[205px] h-[53.83px] border border-blue-300 rounded-[67px] bg-blue-300 text-gray-100 font-lexend text-[24px] font-normal leading-[30px] flex justify-center items-center cursor-pointer hover:bg-blue-400 "
                     type="submit"
                     disabled={isLoading}
-                    onClick={handleSubmit}
                 >
                     {isLoading ? "Signing in..." : "Submit"}
 
@@ -157,7 +158,7 @@ const SignupForm = () =>{
                 </div>
 
                 
-                </div>
+                </form>
             </div>
         </>
     );
