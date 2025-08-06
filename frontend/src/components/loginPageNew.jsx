@@ -60,6 +60,7 @@ const LoginForm = () => {
             if(err.response && err.response.data && err.response.data.message){
                 setError(err.response.data.message);
             }else{
+              console.log(err);
                 setError("An Unexpected error has occured. Try again later.")
             }
         }finally{
@@ -78,8 +79,8 @@ const LoginForm = () => {
 
     
     <form className="relative w-[330px] h-[363px] rounded-[39px] shadow-md bg-gray-200 flex flex-col items-center justify-center p-4 gap-3"
-            onSubmit={handleSubmit}
-        >
+      onSubmit={handleSubmit}
+    >
       {/* Login Heading */}
       <h2 className="text-teal-600  font-lexend text-[36px] font-normal leading-[45px]">
         Login
@@ -93,7 +94,6 @@ const LoginForm = () => {
           placeholder="Email"
           id="Email"
           required
-          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
           className="w-full ml-2 px-2 h-full outline-none bg-transparent rounded-r-3xl"
           onChange={changeUSers}
         />  
