@@ -95,6 +95,8 @@ const SignupForm = () => {
           <input
             placeholder="Email"
             id="Email"
+            required
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
             onChange={changeUSers}
             className="w-full h-10 bg-transparent border-none border-b-2 border-gray-400 rounded-full pl-8 focus:outline-none focus:border-purple-400 text-black text-sm font-medium"
             type="email"
