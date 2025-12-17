@@ -15,7 +15,6 @@ import { FcAbout } from "react-icons/fc";
 import { RxCrossCircled } from "react-icons/rx";
 import { MdOutlineTipsAndUpdates } from "react-icons/md";
 import { MdDeleteOutline } from "react-icons/md";
-import DeleteTrip from "./deleteTrip";
 import DeleteTripAdmin from "./deleteTripAdmin";
 import { useTrips } from "../contexts/TripsContext";
 import { currUser } from "../contexts/UserContext";
@@ -34,7 +33,6 @@ const IndiTripDashboard = () => {
   const [showAddSpend, setShowAddSpend] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
   // const[user,setUser]=useState(null);
-  const[showDelete,setShowDelete]=useState(false);
   const[adminDelete,setAdminDelete]=useState(false);
   const{trips, getAllTrips, isAllTripsLoading} = useTrips();
   const {userInfo, isUserLoading, getUser} = currUser();
@@ -65,30 +63,6 @@ const IndiTripDashboard = () => {
     }
   };
 
-  // const getUser = async () =>{
-  //   try{
-  //     const userRes = await axiosInstance.get("/getUser");
-  //     console.log("User data",userRes.data.user);
-  //     setUser(userRes.data.user);
-  //   }catch(err){
-  //     console.log(err);
-  //   }
-  // }
-
-  const handleDelete = async () => {
-    setIsLoading(true);
-    try {
-      await axiosInstance.delete(`/api/trips/${currTrip._id}/members/${userInfo._id}`);
-      navigate("/tripsDashboard");
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to leave trip!");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
   const handleDeleteAdmin = async () => {
     setIsLoading(true);
     try {
@@ -140,10 +114,6 @@ const IndiTripDashboard = () => {
     navigate("/suggestions", { state: { tripId: currTrip?._id } });
   }
 
-
-  const handleDeleteClick = tripData.Admin === userInfo?._id
-  ? () => setAdminDelete(true)
-  : () => setShowDelete(true);
 
   return (
     <>
@@ -211,12 +181,14 @@ const IndiTripDashboard = () => {
           </div>
 
           <div className="flex h-[65px] w-full items-end justify-center gap-1 ">
-            <div className="h-[65px] flex flex-col w-full items-center justify-center">
-                <MdDeleteOutline className="h-[32px] w-[32px] text-red-700"
-                  onClick={handleDeleteClick}
-                />
-                <p className="text-[12px] font-bold">Delete</p>
+          {tripData.Admin === userInfo?._id && (
+              <div className="h-[65px] flex flex-col w-full items-center justify-center">
+                  <MdDeleteOutline className="h-[32px] w-[32px] text-red-700"
+                    onClick={() => setAdminDelete(true)}
+                  />
+                  <p className="text-[12px] font-bold">Delete</p>
               </div>
+              )}
               
 
               <div className="h-[65px] flex flex-col w-full items-center justify-center pr-3">
@@ -268,9 +240,6 @@ const IndiTripDashboard = () => {
       )}
 
       {showEnd && <EndTrip handleEnd={handleEnd} currTrip={currTrip} />}
-      {showDelete && <DeleteTrip handleDelete={handleDelete} setShowDelete={setShowDelete} userId={userInfo._id}
-        isLoading={isLoading}
-      />}
       {adminDelete && <DeleteTripAdmin handleDeleteAdmin={handleDeleteAdmin} setShowDelete={setAdminDelete} userId={userInfo._id}
         isLoading={isLoading}
       />}

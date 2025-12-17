@@ -1,6 +1,7 @@
 const Trip = require('../models/trips');
 const User = require('../models/users');
 const Expense = require('../models/expense');
+const Notification = require('../models/notification');
 const { sendTripEndEmail } = require('../utils/emailService');
 
 // @desc    Create a new trip
@@ -241,7 +242,7 @@ exports.deleteTrip = async (req, res) => {
 
         await Expense.deleteMany({ trip: req.params.id });
         await Notification.deleteMany({ trip: req.params.id });
-        await trip.remove();
+        await Trip.findByIdAndDelete(req.params.id);
         
         res.json({ message: "Trip deleted successfully" });
     } catch (err) {
@@ -249,3 +250,4 @@ exports.deleteTrip = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 };
+
