@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const methodOverride = require("method-override");
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { sendTripEndEmail } = require('./utils/emailService');
 
 // Database Connection
 async function main() {
@@ -430,19 +430,6 @@ app.get('/:tripId/expenses', authenticateToken, async (req, res) => {
     }
 });
 
-
-//Email logic
-const transporter = nodemailer.createTransport({
-    service: 'gmail', // Change to your email service provider if different
-    auth: {
-        user: process.env.EMAIL_USER,   // Replace with your email address
-        pass: process.env.EMAIL_PASS    // Replace with your email password or app-specific password if using Gmail
-    }
-});
-
-//Main logic
-
-
 app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
     const tripId = req.params.tripId;
 
@@ -499,30 +486,9 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
         await trip.save();
 
         // Step 7: Send an email to each member
-        const emailPromises = trip.members.map(member => {
-            const mailOptions = {
-                from: 'farisharebusiness@gmail.com',
-                to: member._id.email, // Access email from populated member
-                subject: `Your Trip "${trip.tripname}" Has Ended`,
-                text: `
-                    Hi ${member._id.fullname},
-    
-                    The trip "${trip.tripname}" has ended. Here are the summary details:
-    
-                    - Total Trip Cost: ₹${totalTripCost.toFixed(2)}
-                    - Per Member Cost: ₹${perMemberShare.toFixed(2)}
-    
-                    You can check the details of any suggested payments in your account.
-    
-                    Thank you for using FairShare!
-    
-                    Regards,
-                    FairShare Team
-                `,
-            };
-
-            return transporter.sendMail(mailOptions);
-        });
+        const emailPromises = trip.members.map(member => 
+            sendTripEndEmail(member, trip, totalTripCost, perMemberShare)
+        );
 
         await Promise.all(emailPromises);
 

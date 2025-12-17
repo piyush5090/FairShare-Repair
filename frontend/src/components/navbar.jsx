@@ -10,6 +10,7 @@ import ProfileCard from "./profileCard";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import Notifications from "./notificationsNew";
 import { currUser } from "../contexts/UserContext";
+import { useNotifications } from "../contexts/NotificationContext";
 
 
 const Navbar = ( {back} ) => {
@@ -20,24 +21,8 @@ const Navbar = ( {back} ) => {
     const[showProfile,setShowProfile]=useState(false);
     const[showNotifications,setShowNotifications]=useState(false);
     const {userInfo, isUserLoading, getUser} = currUser();
+    const { notificationCount, fetchNotifications } = useNotifications();
 
-    // const getUserInfo = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await axiosInstance.get("/getUser");
-    //         if (response.data && response.data.user) {
-    //             setUserInfo(response.data.user);
-    //         }
-    //         setFetched(true);
-    //     } catch (error) {
-    //         if (error.response && error.response.status === 401) {
-    //             localStorage.clear();
-    //             navigate("/");
-    //         }
-    //     } finally {
-    //         setLoading(false); // Set loading to false when the request finishes
-    //     }
-    // };
 
     const NotificationIcon = ({ count, onClick }) => (
         <div className="relative w-fit cursor-pointer" onClick={onClick}>
@@ -58,7 +43,7 @@ const Navbar = ( {back} ) => {
 
     useEffect(() => {
         getUser();
-        // getUserInfo(); // Fetch user info when the component mounts
+        fetchNotifications();
     }, []);
 
     const handleBack = () =>{
@@ -100,7 +85,7 @@ const Navbar = ( {back} ) => {
                      </div>
                         ) : userInfo ? (
                             <>
-                            <NotificationIcon count={userInfo.notifications?.length} onClick={handleBell} userInfo={userInfo} handleBell={handleBell} />
+                            <NotificationIcon count={notificationCount} onClick={handleBell} />
                     <ProfileInfo userInfo={userInfo} onLogout={onLogout} handleProfile={handleProfile} />
                     
                     </>

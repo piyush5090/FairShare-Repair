@@ -29,6 +29,7 @@ import Suggestions from './components/debtSuggestionNew';
 import IndiSuggetion from './components/test';
 import { TripsProvider } from './contexts/TripsContext';
 import { UserProvider } from './contexts/UserContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import AboutUs from './components/aboutUs';
 import Team from './components/team';
 
@@ -88,7 +89,9 @@ function MainApp() {
       {isReady ? (
         <UserProvider>
           <TripsProvider>
-            <AppRoutes />
+            <NotificationProvider>
+              <AppRoutes />
+            </NotificationProvider>
           </TripsProvider>
         </UserProvider>
       ) : (

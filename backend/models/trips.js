@@ -9,7 +9,7 @@ const tripSchema = new Schema({
     },
     members: [
         {
-            _id: { type: Schema.Types.ObjectId, ref: 'Users', required: true },
+            _id: { type: Schema.Types.ObjectId, ref: 'Users', required: true, index: true },
             totalSpend: {
                 type: Number,
                 default: 0,

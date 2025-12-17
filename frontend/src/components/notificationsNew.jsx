@@ -1,28 +1,10 @@
-import axiosInstance from "../../utils/axiosInstance";
-import { useState, useEffect } from "react";
+import { useNotifications } from "../contexts/NotificationContext";
 import NotificationCard from "./notificationCard";
 import { BiMessageError } from "react-icons/bi";
 import NotificationSkeleton from './notificationSkeleton';
 
-const Notifications = ({ userInfo, handleBell, getUserInfo }) => {
-    const [notifications, setNotifications] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const fetchNotifications = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axiosInstance.get('/notifications');
-            setNotifications(response.data);
-        } catch (err) {
-            console.error("Error fetching notifications:", err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
+const Notifications = ({ userInfo, handleBell }) => {
+    const { notifications, isLoading, fetchNotifications } = useNotifications();
 
     return (
         <>
@@ -41,7 +23,7 @@ const Notifications = ({ userInfo, handleBell, getUserInfo }) => {
                                 <NotificationSkeleton />
                             </>
                         ) : notifications.length > 0 ? (
-                            notifications.map((info, index) => (
+                            notifications.map((info) => (
                                 <NotificationCard key={info._id} userInfo={userInfo} info={info} getUserInfo={fetchNotifications} handleBell={handleBell} />
                             ))
                         ) : (
