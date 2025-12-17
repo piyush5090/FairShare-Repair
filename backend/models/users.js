@@ -1,22 +1,7 @@
-// models/users.js
-
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-async function main() {
-    await mongoose.connect(
-        "mongodb+srv://govindanipiyush:AyO5vhqyUBTisU0E@fairshare.4tlnw.mongodb.net/?retryWrites=true&w=majority&appName=fairshare"
-    );
-}
-
-main()
-  .then(() => {
-    console.log("Users Database Connection Successful");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     fullname: {
         type: String,
     },
@@ -31,39 +16,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
     },
-    trips: [
-        {
-            _id: {
-                type: String,
-            },
-            tripname: {
-                type: String,
-            },
-            createdAt: {
-                type: Date,
-                default: Date.now,
-            },
-            // Optional: field to track how much is owed in this trip
-            amountOwed: {
-                type: Number,
-                default: 0,
-            },
-            // New status field to track the trip status
-            status: {
-                type: String,
-                enum: ['ongoing', 'completed'], // Possible status values
-                default: 'ongoing',  // Default to 'ongoing'
-            },
-            admin:{type: String},
-        }
-    ],
     notifications: [
         {
-            fromId: {type : String},
+            fromId: { type: Schema.Types.ObjectId, ref: 'Users' },
             fromUsername: {type: String},
             fromFullname : {type: String},
             message:{type: String},
-            tripId : {type:String},
+            tripId : { type: Schema.Types.ObjectId, ref: 'Trips' },
             tripName: {type:String},
             time: {
                 type: Date,

@@ -1,14 +1,10 @@
 import React from "react";
-import { useEffect, useState } from "react";
 
-function Tripmember({member, username, fullname, index, totalSpend}){
+function Tripmember({member, index}){
 
-    const [members,setMembers] = useState(null);
-
-    useEffect(()=>{
-        setMembers(member.member);
-    })
-
+    const username = member._id.username;
+    const fullname = member._id.fullname;
+    const totalSpend = member.totalSpend;
 
     return(
         <>

@@ -130,12 +130,9 @@ function TripDashboard() {
                     {members.length > 0 ? (
                         members.map((member, index) => (
                             <Tripmember
-                                key={member._id}
+                                key={member._id._id}
                                 member={member}
                                 index={index + 1}
-                                username={member.username}
-                                fullname={member.fullname}
-                                totalSpend={member.totalSpend}
                             />
                         ))
                     ) : (

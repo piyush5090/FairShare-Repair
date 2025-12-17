@@ -26,7 +26,7 @@ function PayHistory() {
         const fetchPaymentHistory = async () => {
             try {
                 // Fetch payment history
-                const response = await axiosInstance.get(`/${tripId}/paymentHistory`); // Adjust the API endpoint as needed
+                const response = await axiosInstance.get(`/${tripId}/expenses`); // Adjust the API endpoint as needed
                 
                 // Sort the payment history by createdAt in descending order
                 const sortedPaymentHistory = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

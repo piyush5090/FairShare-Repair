@@ -72,13 +72,8 @@ const Suggestions = () => {
         suggestions.map((suggestion, index)=> (
           <IndiSuggetion  
           index = {index+1}
-          fromMemberId = {suggestion.fromMemberId}
-          fromMemberFullname = {suggestion.fromMemberFullname}
-          fromMemberUsername = {suggestion.fromMemberUsername}
-          toMemberId ={suggestion.toMemberId}
-          toMemberFullname = {suggestion.toMemberFullname}
-          toMemberUsername = {suggestion.toMemberUsername}
-          amount = {suggestion.amount}
+          key={suggestion._id}
+          suggestion={suggestion}
           />
         ))
       ) : (

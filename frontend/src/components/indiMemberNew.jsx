@@ -2,7 +2,7 @@ import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 import { useState, useEffect } from "react";
 
-const IndiMember = ({index,member,  fullname, totalSpend, username,memberId, email, tripData, user, getTripDetails  }) =>{
+const IndiMember = ({index,member, tripData, user, getTripDetails  }) =>{
 
   
     const avatarColors = [
@@ -27,7 +27,7 @@ const IndiMember = ({index,member,  fullname, totalSpend, username,memberId, ema
     const handleRemove = async () =>{
         setIsLoading(true);
         try{
-          const res = await axiosInstance.post(`/remove/${tripData.TripId}`,{ memberId });
+          const res = await axiosInstance.post(`/remove/${tripData.TripId}`,{ memberId: member._id._id });
           console.log(res);
           getTripDetails();
           window.location.reload();
@@ -40,8 +40,9 @@ const IndiMember = ({index,member,  fullname, totalSpend, username,memberId, ema
 
     
     const avatarBgColor = avatarColors[index % avatarColors.length];
-    const nameParts = fullname.trim().split(" ");
-    const isLongFullname = fullname?.length > 20;
+    const nameParts = member._id.fullname.trim().split(" ");
+    const isLongFullname = member._id.fullname?.length > 20;
+    const email = member._id.email;
   
     return(
       <>
@@ -57,7 +58,7 @@ const IndiMember = ({index,member,  fullname, totalSpend, username,memberId, ema
     
                 <div className="w-auto flex flex-col justify-start"> 
                     <p className="mx-2 text-[20px] font-[Montserrat] font-medium italic leading-[29px] tracking-[0px] text-left text-[rgb(69,26,3)]">
-                      {isLongFullname ? `${fullname?.slice(0,12)}...` : fullname}
+                      {isLongFullname ? `${member._id.fullname?.slice(0,12)}...` : member._id.fullname}
                         {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
                             <span className={isLongFullname ? "scroll-marquee" : ""}>
                                  {fullname}

@@ -241,12 +241,9 @@ const IndiTripDashboard = () => {
           {members.length > 0 ? (
               members.map((member, index) => (
                 <IndiSpend
-                  key={member._id}
+                  key={member._id._id}
                   index={index+1}
                   member={member}
-                  username={member.username}
-                  fullname={member.fullname}
-                  totalSpend={member.totalSpend}
                 />
               ))
             ) : (

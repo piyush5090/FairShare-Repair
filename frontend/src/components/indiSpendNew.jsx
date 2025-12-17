@@ -1,4 +1,4 @@
-const IndiSpend = ({index,member,  fullname, totalSpend, username  }) =>{
+const IndiSpend = ({index,member}) =>{
 
   const avatarColors = [
     "#A7D2CB", // mint green
@@ -14,6 +14,9 @@ const IndiSpend = ({index,member,  fullname, totalSpend, username  }) =>{
   ];
 
   const avatarBgColor = avatarColors[index % avatarColors.length];
+  const fullname = member._id.fullname;
+  const username = member._id.username;
+  const totalSpend = member.totalSpend;
   const nameParts = fullname.trim().split(" ");
   const isLongFullname = fullname?.length > 13;
   const isLongUsername = username?.length > 15;

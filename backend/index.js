@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
@@ -5,9 +6,23 @@ const methodOverride = require("method-override");
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
+// Database Connection
+async function main() {
+    await mongoose.connect(process.env.MONGO_URI);
+}
+
+main()
+  .then(() => {
+    console.log("Database Connection Successful");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 
 const users = require("./models/users.js")
 const trips = require("./models/trips.js")
+const Expense = require("./models/expense.js");
 const user = require('./routes/users.js')
 const cors = require('cors');
 //const userRoutes = require('./routes/users.js');
@@ -158,7 +173,6 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         email: isUser.email,
         _id: isUser._id,
         fullname: isUser.fullname,
-        trips : isUser.trips,
         upiId : isUser.upiId,
         notifications: isUser.notifications,
       },
@@ -193,21 +207,10 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         createdAt: new Date().getTime(),
         admin: iUser._id,
         status: 'ongoing',
+        members: [{ _id: iUser._id, totalSpend: 0 }] 
       });
   
       await newTrip.save();
-  
-      iUser.trips.push({
-        _id: newTrip._id,  
-        tripname: newTrip.tripname,
-        createdAt: newTrip.createdAt, 
-        status: 'ongoing',
-        admin: newTrip.admin,
-      });
-      
-      
-
-      await iUser.save();
   
       return res.json({
         error: false,
@@ -229,9 +232,8 @@ app.get("/getUser", authenticateToken, async (req, res) => {
 app.get('/getAllTrips',authenticateToken, async (req,res)=>{
     try{
         const { user } = req.user;
-        const data = await users.findById(user._id);
-        const tripList = data.trips;
-        return res.json(tripList);
+        const userTrips = await trips.find({ 'members._id': user._id });
+        return res.json(userTrips);
     }catch(err){
         console.log(err);
         return res.status(500).json({error:true,message:"Server Error"});
@@ -242,7 +244,7 @@ app.get("/getTrip/:id",authenticateToken, async (req,res)=>{
     try{
         const _id  = req.params.id;
         //console.log(_id);
-        const indiTrip = await trips.findById({_id});
+        const indiTrip = await trips.findById({_id}).populate('members._id', 'username fullname email');
         res.json(indiTrip);
     }catch(err){
         console.log(err);
@@ -268,26 +270,13 @@ app.put("//:id", authenticateToken, async (req,res)=>{
     const  user = await users.findById({_id});
     //console.log(user);
 
-    const tripToSave = {
-        _id: tripData.TripId,
-        tripname: tripData.Tripname,
-        createdAt: tripData.CreatedAt,
-    }
-
-    user.trips.push(tripToSave);
-    await user.save().then(()=>{
-        console.log("Saved success");
-    })
-
     const fiTrip = await trips.findById({_id: tripData.TripId});
     //const members = fiTrip.members;
     //console.log(members);
 
     const member ={
-        username : user.username,
-        fullname : user.fullname,
         _id : user._id,
-        totalSpend: "",
+        totalSpend: 0,
     }
     
     fiTrip.members.push(member);
@@ -316,20 +305,6 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Add trip to the user's trips if not already present
-        const tripToSave = {
-            _id: tripData.TripId,
-            tripname: tripData.Tripname,
-            createdAt: tripData.CreatedAt,
-        };
-        
-        // Ensure the trip is not added multiple times
-        if (!user.trips.some(trip => trip._id.toString() === tripToSave._id)) {
-            user.trips.push(tripToSave);
-            await user.save();
-            console.log("Trip saved to user successfully.");
-        }
-
         // Find the trip by ID
         const fiTrip = await trips.findById(tripData.TripId);
         if (!fiTrip) {
@@ -338,7 +313,7 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
 
         // Check if the member exists in the trip's members array (by _id or username)
         const existingMember = fiTrip.members.find(
-            (member) => member._id.toString() === user._id.toString() || member.username === user.username
+            (member) => member._id.toString() === user._id.toString()
         );
 
 
@@ -355,10 +330,7 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
         if (!existingMember) {
             const newMember = {
                 _id: user._id,
-                username: user.username,
-                fullname: user.fullname,
-                email: user.email, // Include the user's email
-                totalSpend: 0, // or initialize with any value you prefer
+                totalSpend: 0, 
             };
 
             fiTrip.members.push(newMember);
@@ -429,7 +401,7 @@ app.post('/:tripId/addSpend', authenticateToken, async (req, res) => {
         }
 
         // Extract user information from token
-        const { user } = req.user; // Assuming authenticateToken attaches { user: userObject } to req.user
+        const { user } = req.user;
 
         // Find the logged-in user in the members array
         const memberIndex = trip.members.findIndex(m => m._id.toString() === user._id.toString());
@@ -437,23 +409,19 @@ app.post('/:tripId/addSpend', authenticateToken, async (req, res) => {
             return res.status(404).json({ message: 'User not found in trip members' });
         }
 
-        // Update totalSpend
+        // Update totalSpend in trip document
         trip.members[memberIndex].totalSpend += amount;
-
-        // Create new payment history entry
-        const newPayment = {
-            _id: user._id.toString(),
-            username: trip.members[memberIndex].username,
-            fullname: trip.members[memberIndex].fullname,
-            spend: amount,
-            where,
-            createdAt: new Date(),
-        };
-
-        trip.paymentHistory.push(newPayment);
-
-        // Save the trip
         await trip.save();
+
+        // Create new Expense document
+        const newExpense = new Expense({
+            description: where,
+            amount: amount,
+            trip: tripId,
+            paidBy: user._id,
+        });
+
+        await newExpense.save();
 
         res.status(200).json({ message: 'Spend added successfully', trip });
     } catch (err) {
@@ -463,22 +431,19 @@ app.post('/:tripId/addSpend', authenticateToken, async (req, res) => {
 });
 
 
-app.get('/:tripId/paymentHistory', async (req, res) => {
+app.get('/:tripId/expenses', authenticateToken, async (req, res) => {
     const { tripId } = req.params;
 
     try {
-        // Find the trip by ID
-        const trip = await trips.findById(tripId);
-
-        if (!trip) {
-            return res.status(404).json({ message: 'Trip not found.' });
+        const expenses = await Expense.find({ trip: tripId }).populate('paidBy', 'username fullname');
+        if (!expenses) {
+            return res.status(404).json({ message: 'No expenses found for this trip.' });
         }
 
-        // Respond with the payment history
-        return res.status(200).json(trip.paymentHistory);
+        return res.status(200).json(expenses);
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: 'An error occurred while fetching payment history.' });
+        return res.status(500).json({ message: 'An error occurred while fetching expenses.' });
     }
 });
 
@@ -487,8 +452,8 @@ app.get('/:tripId/paymentHistory', async (req, res) => {
 const transporter = nodemailer.createTransport({
     service: 'gmail', // Change to your email service provider if different
     auth: {
-        user: 'fairsharebusiness@gmail.com', // Replace with your email address
-        pass: 'rwej zaia gxyg tsss'   // Replace with your email password or app-specific password if using Gmail
+        user: process.env.EMAIL_USER,   // Replace with your email address
+        pass: process.env.EMAIL_PASS    // Replace with your email password or app-specific password if using Gmail
     }
 });
 
@@ -497,13 +462,10 @@ const transporter = nodemailer.createTransport({
 
 app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
     const tripId = req.params.tripId;
-    const userO = req.user.user;
-    const userId = userO._id;
-    console.log(userId);
 
     try {
-        // Fetch the trip
-        const trip = await trips.findById(tripId);
+        // Fetch the trip and populate member details
+        const trip = await trips.findById(tripId).populate('members._id', 'fullname username email upiId');
         
         if (!trip) {
             return res.status(404).json({ message: "Trip not found" });
@@ -516,22 +478,14 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
         trip.totalTripCost = totalTripCost;
         trip.perMemberShare = perMemberShare;
 
-        
-
-
         // Step 2: Calculate balances for each member
         const balances = trip.members.map(member => ({
-            _id: member._id,
-            fullname: member.fullname,
-            username: member.username,
-            email: member.email, // Ensure email is included for sending notifications
+            member: member._id, // this is now the populated user object
             balance: member.totalSpend - perMemberShare,
-            owed: []
         }));
 
-        // Separate into owers and receivers
-        let owers = balances.filter(member => member.balance < 0);
-        let receivers = balances.filter(member => member.balance > 0);
+        let owers = balances.filter(b => b.balance < 0);
+        let receivers = balances.filter(b => b.balance > 0);
 
         // Step 3: Match owers and receivers
         const transactions = [];
@@ -543,14 +497,9 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
 
             const transactionAmount = Math.min(oweAmount, receiveAmount);
             transactions.push({
-                fromMemberId: owers[i]._id,
-                toMemberId: receivers[j]._id,
+                from: owers[i].member._id,
+                to: receivers[j].member._id,
                 amount: transactionAmount,
-                fromMemberFullname: owers[i].fullname,
-                fromMemberUsername: owers[i].username,
-                toMemberFullname: receivers[j].fullname,
-                toMemberUsername: receivers[j].username,
-                upiId: receivers[j].upiId,
             });
 
             // Adjust balances
@@ -561,66 +510,19 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
             if (receivers[j].balance === 0) j++;
         }
 
-        // Step 4: Update owed array for each member
-        transactions.forEach(transaction => {
-            const ower = balances.find(member => member._id.toString() === transaction.fromMemberId.toString());
-            if (ower) {
-                ower.owed.push({
-                    toMemberId: transaction.toMemberId,
-                    amount: transaction.amount,
-                    toMemberFullname: transaction.toMemberFullname,
-                    toMemberUsername: transaction.toMemberUsername,
-                });
-            }
-        });
+        trip.suggestedPayments = transactions;
+        trip.status = 'completed';
 
-        // Step 5: Save balances and owed arrays
-        trip.members.forEach(member => {
-            const updatedMember = balances.find(b => b._id.toString() === member._id.toString());
-            if (updatedMember) {
-                member.balance = updatedMember.balance;
-                member.owed = updatedMember.owed;
-            }
-        });
-
-        // Step 6: Save transactions to suggestedPayments in the trip document
-        trip.suggestedPayments = transactions.map(t => ({
-            fromMemberId: t.fromMemberId,
-            fromMemberFullname: t.fromMemberFullname,
-            fromMemberUsername: t.fromMemberUsername,
-            toMemberId: t.toMemberId,
-            toMemberFullname: t.toMemberFullname,
-            toMemberUsername: t.toMemberUsername,
-            amount: t.amount,
-            upiId: t.upiId,
-        }));
-
-        // Update the status of the trip to 'completed'
-        trip.status = 'completed'; // Set the status to 'completed' when the trip ends
-
-        await trip.save(); // Save the updated trip
-
-        const user = await users.findById(userId); // Ensure the user is fetched from the database
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Find the trip in the user's trips array and update its status
-        const tripIndex = user.trips.findIndex(t => t._id.toString() === tripId); // Find the index of the trip in the user's trips array
-        if (tripIndex !== -1) {
-            user.trips[tripIndex].status = 'completed'; // Update the status to 'completed'
-            await user.save(); // Save the updated user
-        }
+        await trip.save();
 
         // Step 7: Send an email to each member
         const emailPromises = trip.members.map(member => {
             const mailOptions = {
                 from: 'farisharebusiness@gmail.com',
-                to: member.email, // Use each member's email
+                to: member._id.email, // Access email from populated member
                 subject: `Your Trip "${trip.tripname}" Has Ended`,
                 text: `
-                    Hi ${member.fullname},
+                    Hi ${member._id.fullname},
     
                     The trip "${trip.tripname}" has ended. Here are the summary details:
     
@@ -639,24 +541,9 @@ app.post('/api/trip/end/:tripId',authenticateToken, async (req, res) => {
             return transporter.sendMail(mailOptions);
         });
 
-        // Wait for all emails to be sent
         await Promise.all(emailPromises);
 
-        // Response data
-        const result = {
-            totalTripCost,
-            perMemberShare,
-            members: trip.members.map(member => ({
-                fullname: member.fullname,
-                username: member.username,
-                totalSpend: member.totalSpend,
-                owed: member.owed,
-                balance: member.balance,
-            })),
-        };
-
-        // Send the response
-        res.status(200).json(result);
+        res.status(200).json({ message: "Trip ended successfully" });
 
     } catch (error) {
         console.error("Error ending trip or sending emails:", error);
@@ -670,27 +557,16 @@ app.get("/tripSuggestions/:tripId",authenticateToken, async (req, res) => {
     const { tripId } = req.params;
 
     try {
-        // Find the trip by its ID
-        const trip = await trips.findById(tripId);
+        // Find the trip by its ID and populate the names
+        const trip = await trips.findById(tripId)
+            .populate('suggestedPayments.from', 'fullname username upiId')
+            .populate('suggestedPayments.to', 'fullname username upiId');
 
         if (!trip) {
             return res.status(404).json({ message: "Trip not found" });
         }
 
-        // Extract suggested payments
-        const suggestions = trip.suggestedPayments.map(suggestion => ({
-            fromMemberFullname: suggestion.fromMemberFullname,
-            fromMemberUsername: suggestion.fromMemberUsername,
-            toMemberUsername: suggestion.toMemberUsername,
-            toMemberFullname: suggestion.toMemberFullname,
-            fromMemberId: suggestion.fromMemberId,
-            toMemberId: suggestion.toMemberId,
-            amount: suggestion.amount,
-        }));
-
-        console.log("----------------------------------------------------");
-        console.log(suggestions);
-        res.status(200).json({ suggestions });
+        res.status(200).json({ suggestions: trip.suggestedPayments });
     } catch (error) {
         console.error("Error fetching trip suggestions:", error.message);
         res.status(500).json({ message: "Server error", error: error.message });
@@ -752,19 +628,10 @@ app.post("/deleteTrip/:id", authenticateToken, async (req, res) => {
           n => n._id.toString() !== user._id.toString()
         );
         await iTrip.save();
-        console.log(`Removed trip with ID: ${user._id}`);
+        console.log(`Removed user with ID: ${user._id} from trip`);
       }
   
-      if (trip && trip._id) {
-        console.log("Removingg");
-        user.trips = user.trips.filter(
-          n => n._id.toString() !== trip._id.toString()
-        );
-        await user.save();
-        console.log(`Removed trip with ID: ${trip._id}`);
-      }
-  
-      return res.status(200).json({ message: "Trip deleted successfully." });
+      return res.status(200).json({ message: "Trip left successfully." });
   
     } catch (err) {
       console.error(err);

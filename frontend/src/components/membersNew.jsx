@@ -121,15 +121,10 @@ const Members = () =>{
                       ) : tripDetails?.members.length > 0 ? (
                         tripDetails.members.map((member, index) => (
                           <IndiMember
-                            key={member._id}
+                            key={member._id._id}
                             index={index + 1}
                             member={member}
-                            username={member.username}
-                            fullname={member.fullname}
-                            totalSpend={member.totalSpend}
-                            email={member.email}
                             tripData={tripData}
-                            memberId={member._id}
                             user={userInfo}
                             getTripDetails={getTripDetails}
                           />

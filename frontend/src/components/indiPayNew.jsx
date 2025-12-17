@@ -16,9 +16,9 @@ const IndiPay = ({ index, payment }) =>{
   ];
 
   const avatarBgColor = avatarColors[index % avatarColors.length];
-  const nameParts = payment?.fullname.trim().split(" ");
-  const isLongFullname = payment?.fullname?.length > 13;
-  const isLongUsername = payment?.username.kength > 15;
+  const nameParts = payment?.paidBy?.fullname.trim().split(" ");
+  const isLongFullname = payment?.paidBy?.fullname?.length > 13;
+  const isLongUsername = payment?.paidBy?.username.length > 15;
 
   useEffect(()=>{
     console.log(payment);
@@ -49,7 +49,7 @@ const IndiPay = ({ index, payment }) =>{
   
               <div className="w-auto flex flex-col items-start"> 
                   <p className="mx-2 text-[22px] font-[Montserrat] font-medium italic leading-[29px] tracking-[0px] text-left text-[rgb(69,26,3)]">
-                    {isLongFullname ? `${payment?.fullname?.slice(0,12)}...` : payment?.fullname}
+                    {isLongFullname ? `${payment?.paidBy?.fullname?.slice(0,12)}...` : payment?.paidBy?.fullname}
                       {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
                           <span className={isLongFullname ? "scroll-marquee" : ""}>
                                {fullname}
@@ -58,7 +58,7 @@ const IndiPay = ({ index, payment }) =>{
                   </p>
 
                   <p className="mx-2 text-[15px] font-[Montserrat] font-medium italic leading-[23px] tracking-[0px] text-left text-[rgb(69,26,3)]">
-                    {isLongUsername ? `@${payment?.username?.slice(0,12)}...` : `@${payment?.username}`}
+                    {isLongUsername ? `@${payment?.paidBy?.username?.slice(0,12)}...` : `@${payment?.paidBy?.username}`}
                       {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
                           <span className={isLongFullname ? "scroll-marquee" : ""}>
                                {fullname}
@@ -70,7 +70,7 @@ const IndiPay = ({ index, payment }) =>{
   
             <div className="flex items-center pr-1">
                 <span class="text-green-600 font-montserrat text-[22px] font-semibold leading-[34px] tracking-[0px] text-left">
-                    {payment?.spend}/-
+                    {payment?.amount}/-
                 </span>
   
               </div>
@@ -79,7 +79,7 @@ const IndiPay = ({ index, payment }) =>{
 
         <div className="h-[64px] px-2 flex flex-col items-start justify-center w-auto rounded-md shadow-md bg-slate-200">
             <p class="text-[rgb(69,26,3)] font-[Montserrat] text-[22px] font-medium leading-[29px] tracking-[0px] text-left">
-                    At: {payment?.where} 
+                    At: {payment?.description} 
             </p>
 
 

@@ -31,7 +31,7 @@ function EachPayer({ index, payer }) {
                         className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-[10px] text-white flex items-center justify-center text-lg font-semibold"
                         style={{ backgroundColor: avatarBgColor }}
                     >
-                        {payer.fullname.split(" ").map((name) => name.charAt(0)).join("")}
+                        {payer.paidBy.fullname.split(" ").map((name) => name.charAt(0)).join("")}
                     </div>
                 </div>
 
@@ -43,10 +43,10 @@ function EachPayer({ index, payer }) {
                     </div>
                     <div className="flex justify-between items-center">
                         <p className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-medium text-gray-700 truncate">
-                            {payer.fullname}
+                            {payer.paidBy.fullname}
                         </p>
                         <p className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-2xl text-green-500 font-semibold">
-                            ₹{payer.spend}/-
+                            ₹{payer.amount}/-
                         </p>
                     </div>
                 </div>
@@ -75,7 +75,7 @@ function EachPayer({ index, payer }) {
                                     Where:
                                 </p>
                                 <p className="text-sm sm:text-md md:text-lg lg:text-xl font-medium text-gray-600 ml-2">
-                                    {payer.where}
+                                    {payer.description}
                                 </p>
                             </div>
                             <div className="flex">
@@ -91,7 +91,7 @@ function EachPayer({ index, payer }) {
                                     Spend by:
                                 </p>
                                 <p className="text-sm sm:text-md md:text-lg lg:text-xl font-medium text-gray-600 ml-2">
-                                    {payer.username}
+                                    {payer.paidBy.username}
                                 </p>
                             </div>
                         </div>
