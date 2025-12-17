@@ -199,7 +199,7 @@ exports.endTrip = async (req, res) => {
         const emailPromises = trip.members.map(member => 
             sendTripEndEmail(member, trip, totalTripCost, perMemberShare)
         );
-        await Promise.all(emailPromises);
+        Promise.all(emailPromises);
 
         res.status(200).json({ message: "Trip ended successfully" });
     } catch (err) {
