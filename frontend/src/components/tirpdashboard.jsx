@@ -27,7 +27,7 @@ function TripDashboard() {
     const getTrip = async () => {
         try {
             const _id = tripData.TripId;
-            const response = await axiosInstance.get(`/getTrip/${_id}`);
+            const response = await axiosInstance.get(`/api/trips/${_id}`);
             setCurrTrip(response.data);
             setMembers(response.data.members);
         } catch (err) {

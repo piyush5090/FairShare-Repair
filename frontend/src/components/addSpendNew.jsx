@@ -35,12 +35,12 @@ const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) =>{
 
     setIsLoading(true);
     try{
-        const response = await axiosInstance.post(`/${tripId}/addSpend`,{ 
+        const response = await axiosInstance.post(`/api/trips/${tripId}/expenses`,{ 
             amount : numericAmount,
-            where,
+            description: where,
          });
 
-         if(response.status == 200){
+         if(response.status == 201){
             refreshTripData();
             handleShowAddSpend();
          }else{

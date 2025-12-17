@@ -39,22 +39,14 @@ const IndiUser = ({index,member, key,user, fullname, tripData, totalSpend, usern
     //   }  
     // }
 
-    const notification = {
-      fromId : userInfo?._id,
-      fromUsername : userInfo?.username,
-      fromFullname : userInfo?.fullname,
-      message : `invited you to join the group
-        trip ${tripData?.Tripname}.`,
-      tripId : tripData.TripId,
-      tripName: tripData.Tripname,
-      time: Date.now(),
-    }
-
     const handleInvite = async ()=>{
       setIsLoading(true);
       try{
         setInvited(true);
-        const res = await axiosInstance.post(`/invitations/${user._id}`,{ notification });
+        const res = await axiosInstance.post(`/api/notifications/invite`, { 
+          recipientId: user._id,
+          tripId: tripData.TripId,
+        });
         console.log(res);
       }catch(err){ 
           console.log(err);

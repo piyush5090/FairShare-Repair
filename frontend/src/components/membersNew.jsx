@@ -43,7 +43,7 @@ const Members = () =>{
         setIsLoading(true);
         try{
             const _id = tripData.TripId;
-            const response = await axiosInstance.get(`/getTrip/${_id}`);
+            const response = await axiosInstance.get(`/api/trips/${_id}`);
             // const res = await axiosInstance.get("/getUser");
             // setUser(res.data.user);
             console.log(response);

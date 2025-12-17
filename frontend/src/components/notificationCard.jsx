@@ -15,16 +15,15 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
   const onAdd = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.put(`/add/${userInfo._id}`, {
-        currUser: userInfo,
-        tripData: {
-          TripId: info.trip._id,
-        },
-        info: { _id: info._id },
+      // 1. Add user to the trip
+      await axiosInstance.post(`/api/trips/${info.trip._id}/members`, {
+        userId: userInfo._id,
       });
+
+      // 2. Delete the notification
+      await axiosInstance.delete(`/api/notifications/${info._id}`);
+      
       getUserInfo(); // This is now fetchNotifications() from the parent
-      // handleBell(); // This closes the modal, maybe we want to keep it open
-      console.log(response.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -35,11 +34,8 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
   const onReject = async () => {
     setIsLoading(true);
     try {
-      await axiosInstance.put(`/reject/${userInfo._id}`, {
-        info: { _id: info._id },
-      });
+      await axiosInstance.delete(`/api/notifications/${info._id}`);
       getUserInfo(); // This is now fetchNotifications() from the parent
-      // handleBell();
     } catch (err) {
       console.error(err);
     } finally {

@@ -27,7 +27,7 @@ const IndiMember = ({index,member, tripData, user, getTripDetails  }) =>{
     const handleRemove = async () =>{
         setIsLoading(true);
         try{
-          const res = await axiosInstance.post(`/remove/${tripData.TripId}`,{ memberId: member._id._id });
+          const res = await axiosInstance.delete(`/api/trips/${tripData.TripId}/members/${member._id._id}`);
           console.log(res);
           getTripDetails();
           window.location.reload();

@@ -24,7 +24,7 @@ const CreateTripForm = ( { cancelForm, getAllTrips })=>{
     const handleCreate = async ()=>{
         setIsLoading(true);
         try{
-            const res = await axiosInstance.post("/newTrip",{change});
+            const res = await axiosInstance.post("/api/trips", change);
             navigate("/tripsDashboard");
             getAllTrips();
             cancelForm();

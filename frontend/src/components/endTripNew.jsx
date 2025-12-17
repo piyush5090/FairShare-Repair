@@ -10,7 +10,7 @@ const EndTrip = ({ handleEnd, currTrip }) =>{
     setIsLoading(true);
     try {
         // Make the API call to end the trip
-        const response = await axiosInstance.post(`/api/trip/end/${currTrip?._id}`);
+        const response = await axiosInstance.post(`/api/trips/${currTrip?._id}/end`);
         
         // Log the result in the console
         console.log("End Trip Response:", response.data);

@@ -11,14 +11,8 @@ function IndiTrip({ tripId, tripname, createdAt, index }) {
         CreatedAt: createdAt,
     });
 
-    const handleClick = async () => {
-        try {
-            const response = await axiosInstance.get(`/getTrip/${tripId}`);
-            console.log(response.data);
-            navigate("/trip", { state: { tripData } });
-        } catch (err) {
-            console.log(err);
-        }
+    const handleClick = () => {
+        navigate("/trip", { state: { tripData } });
     };
 
     // Convert createdAt to a readable date format (e.g., "10 Aug 2022")

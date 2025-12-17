@@ -26,7 +26,7 @@ const ProfileCard = ({ handleProfile, onLogout, userInfo, getUserInfo }) => {
     const handleEnter = async ()=>{
         setIsLoading(true);
         try{
-            const res = await axiosInstance.post(`/setUpi/${userInfo._id}`,{ change });
+            const res = await axiosInstance.post(`/api/users/${userInfo._id}/set-upi`,{ change });
             getUserInfo();
             console.log(res);
         }catch(err){

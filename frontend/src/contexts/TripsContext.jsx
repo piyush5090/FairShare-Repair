@@ -10,7 +10,7 @@ export const TripsProvider = ({ children })=>{
     const getAllTrips = async()=>{
         setIsAllTripsLoading(true);
         try{
-            const res = await axiosInstance.get("/getAllTrips");
+            const res = await axiosInstance.get("/api/trips");
             setTrips(res.data);
         }catch(err){
             console.log(err);

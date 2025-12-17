@@ -54,7 +54,7 @@ const IndiTripDashboard = () => {
     setIsLoading(true);
     try {
       const _id = tripData.TripId;
-      const response = await axiosInstance.get(`/getTrip/${_id}`);
+      const response = await axiosInstance.get(`/api/trips/${_id}`);
       console.log(response);
       setCurrTrip(response.data);
       setMembers(response.data.members);
@@ -78,12 +78,12 @@ const IndiTripDashboard = () => {
   const handleDelete = async () => {
     setIsLoading(true);
     try {
-      const res = await axiosInstance.post(`/deleteTrip/${userInfo._id}`, { currTrip });
+      await axiosInstance.delete(`/api/trips/${currTrip._id}/members/${userInfo._id}`);
       navigate("/tripsDashboard");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert("Failed to delete trip!");
+      alert("Failed to leave trip!");
     } finally {
       setIsLoading(false);
     }
@@ -92,14 +92,12 @@ const IndiTripDashboard = () => {
   const handleDeleteAdmin = async () => {
     setIsLoading(true);
     try {
-      const res1 = await axiosInstance.post(`/deleteTrip/${userInfo._id}`, { currTrip });
-      const res = await axiosInstance.delete(`/deleteAdmin/${tripData.TripId}`);
-      console.log(res.data.message);  
+      await axiosInstance.delete(`/api/trips/${currTrip._id}`);
       navigate("/tripsDashboard");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert("Failed to delete Admin trip!");
+      alert("Failed to delete trip!");
     } finally {
       setIsLoading(false);
     }

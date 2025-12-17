@@ -10,7 +10,7 @@ export const NotificationProvider = ({ children }) => {
     const fetchNotifications = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await axiosInstance.get('/notifications');
+            const response = await axiosInstance.get('/api/notifications');
             setNotifications(response.data);
         } catch (err) {
             console.error("Error fetching notifications:", err);

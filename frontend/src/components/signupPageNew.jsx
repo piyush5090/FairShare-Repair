@@ -48,7 +48,7 @@ const SignupForm = () =>{
         setError(null);
 
         try{
-            const res = await axiosInstance.post("signup",{ users });
+            const res = await axiosInstance.post("/api/auth/signup",{ users });
             if(res.data.error==false){
                 const response = res.data.message;
                 localStorage.setItem("token",res.data.accessToken);

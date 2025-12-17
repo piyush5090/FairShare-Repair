@@ -25,14 +25,8 @@ const IndiTrip = ({ tripname, tripId, createdAt, index, admin }) => {
     year: "numeric",
   });
 
-  const handleClick = async () => {
-    try {
-      // navigate("/indiTripDashboard", { state: { TripId : TripId } });
-      navigate("/indiTripDashboard", { state: { tripData : tripData } });
-      const res = await axiosInstance.get(`/getTrip/${tripId}`);
-    } catch (err) {
-      // Handle error if needed
-    }
+  const handleClick = () => {
+    navigate("/indiTripDashboard", { state: { tripData: tripData } });
   };
 
   const isLongTripname = tripname.length > 12;

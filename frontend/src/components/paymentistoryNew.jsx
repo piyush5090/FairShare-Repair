@@ -24,7 +24,7 @@ const History = () => {
   const fetchPaymentHistory = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get(`/${tripData.TripId}/expenses`);
+      const response = await axiosInstance.get(`/api/trips/${tripData.TripId}/expenses`);
       const sortedPaymentHistory = response.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );

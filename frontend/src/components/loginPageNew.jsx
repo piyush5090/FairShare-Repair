@@ -47,7 +47,7 @@ const LoginForm = () => {
 
         try{
             
-            const res = await axiosInstance.post("/login",{ users });
+            const res = await axiosInstance.post("/api/auth/login",{ users });
             if(res.data.error == false){
                 const response = res.data;
                 localStorage.setItem("token",res.data.accessToken);

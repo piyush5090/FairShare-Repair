@@ -17,11 +17,11 @@ const Suggestions = () => {
     const fetchSuggestions = async()=>{
         setIsLoading(true);
         try{
-            const response = await axiosInstance.get(`/tripSuggestions/${tripId}`);
+            const response = await axiosInstance.get(`/api/trips/${tripId}/suggestions`);
             console.log(response);
-            setSuggestions(response.data.suggestions);
+            setSuggestions(response.data);
 
-            const tripRes = await axiosInstance.get(`/getTrip/${tripId}`);
+            const tripRes = await axiosInstance.get(`/api/trips/${tripId}`);
             setTripDetails(tripRes.data);
         }catch(err){
             console.log(err);

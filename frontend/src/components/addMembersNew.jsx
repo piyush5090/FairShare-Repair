@@ -15,7 +15,7 @@ const AddMembers = ({tripData, getTripDetails, handleUsers})=>{
     const getAllUsers = async () =>{
         setIsLoading(true);
         try{
-            const response = await axiosInstance.get("/getAllUsers");
+            const response = await axiosInstance.get("/api/users");
             setAllusers(response.data.allUsers);
 
         }catch(err){    

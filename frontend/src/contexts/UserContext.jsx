@@ -10,7 +10,7 @@ export const UserProvider = ({ children })=>{
     const getUser = async ()=>{
         setIsUserLoading(true);
         try{
-            const res = await axiosInstance.get("/getUser");
+            const res = await axiosInstance.get("/api/users/me");
             setUserInfo(res.data.user);
         }catch(err){
             console.log(err);
