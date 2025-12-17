@@ -155,15 +155,18 @@ exports.removeMember = async (req, res) => {
 // @route   POST /api/trips/:id/end
 exports.endTrip = async (req, res) => {
     try {
-        const trip = await Trip.findById(req.params.id).populate('members._id', 'fullname username email upiId');
+        const trip = await Trip.findById(req.params.id)
+            .populate('members._id', 'fullname username email upiId');
+
         if (!trip) {
             return res.status(404).json({ message: "Trip not found" });
         }
-        // if (trip.status === 'completed') {
-        //     return res.status(400).json({ message: "Trip has already been ended." });
-        // }
 
-        const totalTripCost = trip.members.reduce((total, member) => total + member.totalSpend, 0);
+        const totalTripCost = trip.members.reduce(
+            (total, member) => total + member.totalSpend,
+            0
+        );
+
         const perMemberShare = totalTripCost / trip.members.length;
 
         trip.totalTripCost = totalTripCost;
@@ -178,12 +181,21 @@ exports.endTrip = async (req, res) => {
         let receivers = balances.filter(b => b.balance > 0);
 
         const transactions = [];
-        while (owers.length > 0 && receivers.length > 0) {
+
+        while (owers.length && receivers.length) {
             const ower = owers[0];
             const receiver = receivers[0];
-            const amount = Math.min(Math.abs(ower.balance), receiver.balance);
 
-            transactions.push({ from: ower.member._id, to: receiver.member._id, amount });
+            const amount = Math.min(
+                Math.abs(ower.balance),
+                receiver.balance
+            );
+
+            transactions.push({
+                from: ower.member._id,
+                to: receiver.member._id,
+                amount
+            });
 
             ower.balance += amount;
             receiver.balance -= amount;
@@ -194,19 +206,46 @@ exports.endTrip = async (req, res) => {
 
         trip.suggestedPayments = transactions;
         trip.status = 'completed';
+
         await trip.save();
 
-        const emailPromises = trip.members.map(member => 
-            sendTripEndEmail(member, trip, totalTripCost, perMemberShare)
-        );
-        Promise.all(emailPromises);
-
+        // ✅ RESPOND IMMEDIATELY (prevents timeout)
         res.status(200).json({ message: "Trip ended successfully" });
+
+        // ✅ SEND EMAILS IN BACKGROUND
+        setImmediate(async () => {
+            try {
+                const results = await Promise.allSettled(
+                    trip.members.map(member =>
+                        sendTripEndEmail(
+                            member,
+                            trip,
+                            totalTripCost,
+                            perMemberShare
+                        )
+                    )
+                );
+
+                results.forEach((result, index) => {
+                    if (result.status === "rejected") {
+                        console.error(
+                            `❌ Email failed for ${trip.members[index]._id.email}`,
+                            result.reason
+                        );
+                    }
+                });
+
+            } catch (err) {
+                console.error("❌ Email batch error:", err);
+            }
+        });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server Error" });
     }
 };
+
 
 // @desc    Get settlement suggestions for a trip
 // @route   GET /api/trips/:id/suggestions
