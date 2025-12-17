@@ -16,20 +16,6 @@ const userSchema = new Schema({
     password: {
         type: String,
     },
-    notifications: [
-        {
-            fromId: { type: Schema.Types.ObjectId, ref: 'Users' },
-            fromUsername: {type: String},
-            fromFullname : {type: String},
-            message:{type: String},
-            tripId : { type: Schema.Types.ObjectId, ref: 'Trips' },
-            tripName: {type:String},
-            time: {
-                type: Date,
-                default: Date.now,
-            },
-        }
-    ],
     upiId : {type : String},
 });
 

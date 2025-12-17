@@ -23,6 +23,7 @@ main()
 const users = require("./models/users.js")
 const trips = require("./models/trips.js")
 const Expense = require("./models/expense.js");
+const Notification = require("./models/notification.js");
 const user = require('./routes/users.js')
 const cors = require('cors');
 //const userRoutes = require('./routes/users.js');
@@ -174,7 +175,6 @@ app.get("/getUser", authenticateToken, async (req, res) => {
         _id: isUser._id,
         fullname: isUser.fullname,
         upiId : isUser.upiId,
-        notifications: isUser.notifications,
       },
       message: "",
     });
@@ -297,7 +297,7 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
         const currUser = req.body.currUser;
         const _id = currUser._id;
         const tripData = req.body.tripData;
-        const info = req.body.info;
+        const info = req.body.info; // This is the notification object from the frontend
 
         // Find the user by ID
         const user = await users.findById(_id);
@@ -311,19 +311,15 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
             return res.status(404).json({ message: "Trip not found" });
         }
 
-        // Check if the member exists in the trip's members array (by _id or username)
+        // Check if the member exists in the trip's members array
         const existingMember = fiTrip.members.find(
             (member) => member._id.toString() === user._id.toString()
         );
 
-
+        // If a notification ID is present, delete it
         if (info && info._id) {
-            console.log("Removingg");
-            user.notifications = user.notifications.filter(
-                n => n._id.toString() !== info._id.toString()
-            );
-            await user.save();
-            console.log(`Removed notification with ID: ${info._id}`);
+            await Notification.findByIdAndDelete(info._id);
+            console.log(`Notification ${info._id} deleted.`);
         }
         
         // If the member does not exist, add them to the trip
@@ -332,11 +328,8 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
                 _id: user._id,
                 totalSpend: 0, 
             };
-
             fiTrip.members.push(newMember);
             await fiTrip.save();
-
-            
             console.log("Member added to trip successfully.");
         } else {
             console.log("Member already exists in the trip.");
@@ -354,28 +347,18 @@ app.put("/add/:id", authenticateToken, async (req, res) => {
 });
 
 app.put("/reject/:id", authenticateToken, async(req,res)=>{
-    const currUser = req.body.currUser;
-    const _id = currUser._id;
     const info = req.body.info;
-
     try{
-        const user = await users.findById(_id);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
         if (info && info._id) {
-            console.log("Removingg");
-            user.notifications = user.notifications.filter(
-                n => n._id.toString() !== info._id.toString()
-            );
-            await user.save();
-            console.log(`Removed notification with ID: ${info._id}`);
+            await Notification.findByIdAndDelete(info._id);
+            console.log(`Notification ${info._id} deleted.`);
+            res.status(200).json({message: "Notification rejected and removed"});
+        } else {
+            res.status(400).json({message: "No notification ID provided"});
         }
-
-        res.status(200).json({message: "Notification removed"});
     }catch(err){
-        //error
+        console.error(err);
+        res.status(500).json({ message: "Server error", error: err });
     }
 })
 
@@ -575,19 +558,38 @@ app.get("/tripSuggestions/:tripId",authenticateToken, async (req, res) => {
 
 
 // Notifications
+app.get('/notifications', authenticateToken, async (req, res) => {
+    try {
+        const { user } = req.user;
+        const notifications = await Notification.find({ recipient: user._id })
+            .populate('sender', 'fullname username')
+            .populate('trip', 'tripname')
+            .sort({ createdAt: -1 });
+        res.json(notifications);
+    } catch (err) {
+        console.error("Error fetching notifications:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 app.post("/invitations/:userId",authenticateToken, async (req,res)=>{
-    const { userId } = req.params;
-    const { notification } = req.body;
-    const tripId = notification.tripId;
-    console.log(req.body);
+    const { userId: recipientId } = req.params;
+    const { notification: notificationData } = req.body; // Contains fromId, tripId, message, etc. from frontend
+    
     try{
-        const user = await users.findById(userId);
-        user.notifications.push(notification);
-        await user.save();
-    }catch(err){
-        console.log("Error adding notification");
+        const newNotification = new Notification({
+            recipient: recipientId,
+            sender: notificationData.fromId,
+            trip: notificationData.tripId,
+            type: 'trip_invitation',
+            // message is not in the new schema, but can be constructed on the frontend
+        });
+        await newNotification.save();
+        res.status(201).json({ message: "Invitation sent successfully." });
+    } catch(err){
+        console.log("Error sending invitation");
         console.log(err);
+        res.status(500).json({ message: "Error sending invitation" });
     }
 });
 

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
 
 const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [trip, setTrip] = useState(null);
 
-  const formattedDate = new Date(info.time).toLocaleDateString('en-GB', {
+  const formattedDate = new Date(info.createdAt).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -13,11 +12,19 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
     minute: '2-digit',
   });
 
-  const getTrip = async () => {
+  const onAdd = async () => {
     setIsLoading(true);
     try {
-      const res = await axiosInstance.get(`/getTrip/${info.tripId}`);
-      setTrip(res.data);
+      const response = await axiosInstance.put(`/add/${userInfo._id}`, {
+        currUser: userInfo,
+        tripData: {
+          TripId: info.trip._id,
+        },
+        info: { _id: info._id },
+      });
+      getUserInfo(); // This is now fetchNotifications() from the parent
+      // handleBell(); // This closes the modal, maybe we want to keep it open
+      console.log(response.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -25,43 +32,13 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
     }
   };
 
-  const onAdd = async () => {
-    setIsLoading(true);
-    if (trip) {
-      try {
-        const response = await axiosInstance.put(`/add/${userInfo._id}`, {
-          currUser: userInfo,
-          tripData: {
-            TripId: info.tripId,
-            Tripname: trip?.tripname,
-            CreatedAt: trip?.createdAt,
-          },
-          info: info,
-        });
-        getUserInfo();
-        handleBell();
-        window.location.reload();
-        console.log(response.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  useEffect(()=>{
-    getTrip();
-  },[]);
-
   const onReject = async () => {
     setIsLoading(true);
     try {
       await axiosInstance.put(`/reject/${userInfo._id}`, {
-        currUser: userInfo,
-        info: info,
+        info: { _id: info._id },
       });
-      getUserInfo();
+      getUserInfo(); // This is now fetchNotifications() from the parent
       // handleBell();
     } catch (err) {
       console.error(err);
@@ -70,8 +47,10 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
     }
   };
 
+  const message = `invited you to join "${info.trip.tripname}"`;
+
   return (
-    <div className="bg-[#f2f3f7] border-[1.5px] border-[#f2f3f7] rounded-xl shadow-[1em_1em_1em_#d8dae0b1,-0.75em_-0.75em_1em_#ffffff] cursor-pointer w-fit p-4">
+    <div className="bg-[#f2f3f7] border-[1.5px] border-[#f2f3f7] rounded-xl shadow-[1em_1em_1em_#d8dae0b1,-0.75em_-0.75em_1em_#ffffff] cursor-pointer w-fit p-4 mt-2">
       {isLoading ? (
         <div className="flex items-center justify-center h-24 w-64">
           <div className="w-6 h-6 border-2 border-gray-300 border-t-green-500 rounded-full animate-spin" />
@@ -85,9 +64,9 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
             <div className="flex flex-col gap-1 text-[#333]">
               <p className="text-content">
                 <a href="#" className="text-black font-medium no-underline">
-                  {info.fromUsername}
+                  {info.sender.username}
                 </a>{' '}
-                {info.message}
+                {message}
               </p>
               <p className="text-sm text-[#777]">{formattedDate}</p>
             </div>
@@ -113,3 +92,4 @@ const NotificationCard = ({ userInfo, info, getUserInfo, handleBell }) => {
 };
 
 export default NotificationCard;
+
