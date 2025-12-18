@@ -209,42 +209,33 @@ exports.endTrip = async (req, res) => {
 
         await trip.save();
 
-        // ✅ RESPOND IMMEDIATELY (prevents timeout)
-        res.status(200).json({ message: "Trip ended successfully" });
-
-        // ✅ SEND EMAILS IN BACKGROUND
-        setImmediate(async () => {
+        // ✅ SEND EMAILS (Render-safe)
+        for (const member of trip.members) {
             try {
-                const results = await Promise.allSettled(
-                    trip.members.map(member =>
-                        sendTripEndEmail(
-                            member,
-                            trip,
-                            totalTripCost,
-                            perMemberShare
-                        )
-                    )
+                await sendTripEndEmail(
+                    member,
+                    trip,
+                    totalTripCost,
+                    perMemberShare
                 );
-
-                results.forEach((result, index) => {
-                    if (result.status === "rejected") {
-                        console.error(
-                            `❌ Email failed for ${trip.members[index]._id.email}`,
-                            result.reason
-                        );
-                    }
-                });
-
+                console.log(`✅ Email sent to ${member._id.email}`);
             } catch (err) {
-                console.error("❌ Email batch error:", err);
+                console.error(
+                    `❌ Email failed for ${member._id.email}`,
+                    err
+                );
             }
-        });
+        }
+
+        // ✅ RESPOND AFTER EMAILS
+        res.status(200).json({ message: "Trip ended successfully" });
 
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server Error" });
     }
 };
+
 
 
 // @desc    Get settlement suggestions for a trip

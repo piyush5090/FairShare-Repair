@@ -86,7 +86,7 @@ exports.getAllUsers = async (req, res) => {
 exports.setUpi = async (req, res) => {
     try {
         const userId = req.params.id;
-        const upiId = req.body.change.upi;
+        const upiId = req.body.upiId;
 
         // Ensure the logged-in user can only update their own UPI
         if (req.user.user._id.toString() !== userId) {
