@@ -22,7 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const allowedOrigins = [
     'http://localhost:5173',
-    'https://fair-share-2.vercel.app'
+    'https://fair-share-2.vercel.app',
+    'https://fairshare-tau.vercel.app',
 ];
 app.use(cors({
     origin: function (origin, callback) {

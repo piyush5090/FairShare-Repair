@@ -32,6 +32,7 @@ import { UserProvider } from './contexts/UserContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import AboutUs from './components/aboutUs';
 import Team from './components/team';
+import HelpPage from './components/HelpPage';
 
 function AppRedirector({ setIsReady }) {
   const navigate = useNavigate();
@@ -75,7 +76,8 @@ function AppRoutes() {
       <Route path='/members' element={<Members />} />
       <Route path='/suggestions' element={<Suggestions />} />
       <Route path='/aboutUs' element={<AboutUs />} />
-      <Route path='/team' element={<Team />} />
+      <Route path="/team" element={<Team />} />
+      <Route path="/help" element={<HelpPage />} />
     </Routes>
   );
 }

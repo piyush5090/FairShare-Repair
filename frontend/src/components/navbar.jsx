@@ -81,6 +81,14 @@ const Navbar = ({ back }) => {
                   </AnimatePresence>
                 </div>
 
+                {/* Help Button */}
+                <button 
+                  onClick={() => navigate("/help")}
+                  className="p-2 hover:bg-slate-100 rounded-2xl text-slate-600 transition-colors"
+                >
+                  Help
+                </button>
+
                 {/* Profile Toggle */}
                 <ProfileInfo 
                   userInfo={userInfo} 

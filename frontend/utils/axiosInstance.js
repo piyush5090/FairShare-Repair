@@ -1,8 +1,8 @@
 import axios from "axios";
 const axiosInstance = axios.create({
-  baseURL: "https://fairshare-backend-w2xr.onrender.com",
+  //baseURL: "https://fairshare-backend-w2xr.onrender.com",
+  baseURL: "https://fair-share-repair.vercel.app",
   //baseURL: "http://localhost:8080",
-  //baseURL: "https://fair-share-z6e8.vercel.app",
   withCredentials: true,
   
   timeout: 10000,
