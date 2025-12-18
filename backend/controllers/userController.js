@@ -37,12 +37,44 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-// @desc    Get all users
+// @desc    Get all users (with Pagination and Search)
 // @route   GET /api/users
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password');
-        res.json({ allUsers: users });
+        // 1. Get query parameters from URL
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.query || ""; // User's search text
+
+        // 2. Calculate the number of documents to skip
+        const skip = (page - 1) * limit;
+
+        // 3. Create a search filter
+        // This looks for the search string in username, fullname, or email (case-insensitive)
+        const searchFilter = search ? {
+            $or: [
+                { username: { $regex: search, $options: 'i' } },
+                { fullname: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } }
+            ]
+        } : {};
+
+        // 4. Fetch the specific slice of users
+        const users = await User.find(searchFilter)
+            .select('-password')
+            .skip(skip)
+            .limit(limit)
+            .sort({ fullname: 1 }); // Sort alphabetically
+
+        // 5. (Optional) Get total count for frontend calculations
+        const totalUsers = await User.countDocuments(searchFilter);
+
+        res.json({ 
+            allUsers: users,
+            currentPage: page,
+            totalPages: Math.ceil(totalUsers / limit),
+            totalResults: totalUsers
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Server Error" });

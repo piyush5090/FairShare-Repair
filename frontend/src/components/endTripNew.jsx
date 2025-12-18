@@ -1,62 +1,71 @@
-import axiosInstance from "../../utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
 
-const EndTrip = ({ handleEnd, currTrip }) =>{
+const EndTrip = ({ handleEnd, currTrip }) => {
   const navigate = useNavigate();
-  const[isLoading,setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const confirmEndTrip = async () => {
     setIsLoading(true);
     try {
-        // Make the API call to end the trip
-        const response = await axiosInstance.post(`/api/trips/${currTrip?._id}/end`);
-        
-        // Log the result in the console
-        console.log("End Trip Response:", response.data);
-
-        // Redirect to the TripSuggestion page with tripId
-        navigate("/suggestions", { state: { tripId: currTrip?._id } });
-
+      const response = await axiosInstance.post(`/api/trips/${currTrip?._id}/end`);
+      navigate("/suggestions", { state: { tripId: currTrip?._id } });
     } catch (error) {
-        console.error("Error ending trip:", error);
+      console.error("Error ending trip:", error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
+  };
 
-    return(
-      <>
-      <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center"></div>
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="flex items-center flex-col gap-4 w-[342px] h-[200px] border border-[#75B3F8] rounded-[33px] bg-slate-300">
-            {isLoading ? (
-                <p className="w-[335px] h-[91px] mt-4 text-black font-nunito text-[20px] font-semiabold leading-[41px] text-center">
-                  Performing calculations...<br />Sending mail to members...
-                </p>
-            ) : (
-              <p className="w-[335px] h-[91px] mt-4 text-[rgb(248,51,51)] font-nunito text-[30px] font-semiabold leading-[41px] text-center">
-                Are you sure <br />want to End this Trip?
+  return (
+    /* IMPORTANT: No 'fixed' or 'inset-0' here. 
+       We use 'relative' so it stays inside the parent's flex center.
+    */
+    <div className="relative w-full bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100 font-nunito">
+      <div className="p-8">
+        <h2 className="text-3xl font-black text-slate-800 text-left mb-1 tracking-tight">
+          End Trip
+        </h2>
+        <p className="text-slate-400 text-left mb-8 font-medium italic text-sm">
+          Finalize all expenses
+        </p>
+
+        <div className="space-y-6">
+          {isLoading ? (
+            <div className="py-6 flex flex-col items-center justify-center text-center">
+              <div className="w-10 h-10 border-4 border-slate-100 border-t-teal-500 rounded-full animate-spin mb-4" />
+              <p className="text-slate-600 font-bold">Running final numbers...</p>
+            </div>
+          ) : (
+            <div className="py-2 text-left">
+              <p className="text-red-500 font-black text-xl">Are you sure?</p>
+              <p className="text-slate-500 text-sm mt-2 leading-relaxed font-medium">
+                This will calculate final balances and notify all members. This cannot be undone.
               </p>
-            )}
+            </div>
+          )}
 
-            <div className="flex justify-around items-center w-[312px] h-[47px]">
-        <button class="w-[117px] mx-2 h-[45px] rounded-[21px] bg-blue-300 text-white font-bold"
-            onClick={handleEnd}
-        >
-            Cancel
-        </button>
-
-          <button className="w-[117px] mx-2 h-[45px] rounded-[21px] bg-red-600 text-white font-bold"
-            onClick={confirmEndTrip}
-          >
-              {isLoading ? "Ending..." : "End"}
-          </button>
-        </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              disabled={isLoading}
+              onClick={handleEnd}
+              className="flex-1 h-[54px] rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold transition-all active:scale-95"
+            >
+              Go Back
+            </button>
+            <button
+              disabled={isLoading}
+              onClick={confirmEndTrip}
+              className="flex-[1.5] h-[54px] rounded-2xl bg-red-500 hover:bg-red-600 text-white font-bold shadow-lg shadow-red-100 transition-all active:scale-95 disabled:grayscale"
+            >
+              {isLoading ? "Ending..." : "End Trip"}
+            </button>
           </div>
         </div>
-      </>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
 export default EndTrip;

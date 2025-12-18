@@ -1,138 +1,131 @@
-import Navbar from "./navbar";
 import { PiUserLight } from "react-icons/pi";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdEdit } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-
+import { motion, AnimatePresence } from "framer-motion";
 
 const ProfileCard = ({ handleProfile, onLogout, userInfo, getUserInfo }) => {
-
     const cardRef = useRef(null);
-    const [change,setChange]=useState("");
-    const[isLoading,setIsLoading]=useState(false);
+    const [upiInput, setUpiInput] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    function handleChange(event){
-        event.preventDefault();
-        const{ id,value }=event.target;
-        setChange(prevState => ({
-            ...prevState,
-            [id]:value
-        }));
-    };
-
-    
-
-
-    const handleEnter = async ()=>{
+    const handleUpdateUpi = async () => {
+        if (!upiInput && !isEditing) {
+            setIsEditing(true);
+            return;
+        }
         setIsLoading(true);
-        try{
-            const res = await axiosInstance.post(`/api/users/${userInfo._id}/set-upi`,{ change });
-            getUserInfo();
-            console.log(res);
-        }catch(err){
+        try {
+            await axiosInstance.post(`/api/users/${userInfo._id}/set-upi`, { upiId: upiInput });
+            await getUserInfo();
+            setIsEditing(false);
+        } catch (err) {
             console.error(err);
-        }finally{
+        } finally {
             setIsLoading(false);
         }
-    }
+    };
 
-    useEffect(()=>{
-        const handleClickOutside = (event)=>{
-            if(cardRef.current && !cardRef.current.contains(event.target)){
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (cardRef.current && !cardRef.current.contains(event.target)) {
                 handleProfile();
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
-        return () =>{
-            document.removeEventListener("mousedown",handleClickOutside);
-        };
-    },[handleProfile]);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [handleProfile]);
 
-    const isLongFullname = userInfo.fullname.length > 12;
+    return (
+        <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-20 bg-slate-900/40 backdrop-blur-sm font-nunito">
+            <motion.div 
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="w-full max-w-md bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100"
+                ref={cardRef}
+            >
+                <div className="p-6">
+                    {/* Top Section: Avatar & Identity */}
+                    <div className="flex gap-5 items-center">
+                        <div className="flex-shrink-0 w-24 h-24 bg-slate-100 rounded-3xl flex items-center justify-center shadow-inner">
+                            <PiUserLight className="w-14 h-14 text-slate-400" />
+                        </div>
 
-  return (
-    <>
-      <div className="fixed w-screen px-2 h-[210px] mt-[73px] items-center justify-center shadow-[0px_4px_4px_rgba(0,0,0,0.25)] z-40 inset-0 bg-black/30 backdrop-blur-sm">
-        <div className="w-full h-[200px] rounded-[11px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-white" 
-            ref={cardRef}
-        >
-          {/* Top section */}
-          <div className="flex gap-2">
-            {/* Avatar */}
-            <div className="flex flex-col ml-2 gap-2 items-center">
-              <div className="flex items-center justify-center w-[104px] mt-[15px] h-[104px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-[rgba(243,244,246,0.81)] rounded-full">
-                <PiUserLight className="w-[60px] h-[60px] text-gray-600" />
-              </div>
-            </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-black text-teal-600 uppercase tracking-widest mb-1">
+                                User Account
+                            </p>
+                            <h2 className="text-2xl font-black text-slate-800 truncate leading-tight">
+                                {userInfo.fullname.toLowerCase()}
+                            </h2>
+                            <p className="text-sm font-bold text-slate-400 truncate">
+                                {userInfo.email}
+                            </p>
+                        </div>
+                    </div>
 
-            {/* Profile details */}
-            <div className="flex flex-col mt-[35px]">
-              <p className="w-[25px] mb-1 h-[10px] text-[13px] leading-[10px] font-normal text-[#374151] font-inter text-left">
-                Profile
-              </p>
-              <p className="w-full overflow-hidden h-[35px] text-[29px] leading-[35px] font-normal text-[#374151] font-['Lexend_Deca'] text-left">
-              <span className={isLongFullname ? "scroll-marquee" : ""}>
-                    {userInfo.fullname.toLowerCase()}
-              </span>
-                
-              </p>
-              <p className="w-[162px] h-[15px] mt-2 text-[15px] leading-[15px] font-normal text-[#374151] font-inter text-left">
-                {userInfo.email}
-              </p>
-            </div>
-          </div>
+                    {/* Middle Section: Stats/Username */}
+                    <div className="mt-6 flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl w-fit">
+                        <span className="text-xs font-black text-slate-400">ID:</span>
+                        <span className="text-sm font-bold text-slate-700">@{userInfo.username}</span>
+                    </div>
 
-          {/* Bottom section */}
-          <div className="flex items-center justify-between px-2 mt-2 ">
-            {/* UPI section */}
-            <div className="flex flex-col gap-2">
-              <p className="text-[15px] leading-[13px] text-left ml-2 font-normal text-[#374151] font-['Lexend_Deca']">
-                @{userInfo.username}
-              </p>
+                    {/* Bottom Section: UPI & Logout */}
+                    <div className="mt-6 pt-6 border-t border-slate-100 flex items-end justify-between">
+                        <div className="flex-1 mr-4">
+                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                                UPI Settings
+                            </p>
+                            
+                            <div className="flex items-center gap-2">
+                                {userInfo.upiId && !isEditing ? (
+                                    <div className="flex flex-col">
+                                        <span className="text-lg font-black text-slate-800">{userInfo.upiId}</span>
+                                        <button 
+                                            onClick={() => setIsEditing(true)}
+                                            className="text-teal-600 text-xs font-bold hover:underline text-left"
+                                        >
+                                          Update UPI ID
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 w-full">
+                                        <input
+                                            autoFocus
+                                            className="flex-1 h-11 px-4 rounded-xl bg-slate-100 border-2 border-transparent focus:border-teal-500 focus:bg-white outline-none transition-all text-sm font-bold text-slate-700 shadow-inner"
+                                            type="text"
+                                            placeholder="yourname@bank"
+                                            value={upiInput}
+                                            onChange={(e) => setUpiInput(e.target.value)}
+                                        />
+                                        <button 
+                                            onClick={handleUpdateUpi}
+                                            disabled={isLoading}
+                                            className="h-11 px-4 bg-teal-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-teal-100 active:scale-95 transition-all"
+                                        >
+                                            {isLoading ? "..." : "Set"}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
-              <div className="flex gap-[5px] ml-2 mt-1 mb-2 items-center justify-center">
-                <p className="text-[17px] leading-[15px] font-normal text-[#374151] font-['Lexend_Deca'] text-left">
-                  UPI id:
-                </p>
-
-                {userInfo.upiId ? (
-                <>
-                        <p className="text-gray-700 text-[17px]">{userInfo.upiId}</p>
-                        <p className="text-[#257fe3] text-[15px] underline cursor-pointer" onClick={handleEnter}>
-                            reset
-                        </p>
-                </>
-            ) : (
-                <>
-                <input
-                    className="w-[135px] px-2 py-1 rounded-lg bg-[#b7c4d2] border border-black text-[#374151]"
-                    type="text"
-                    placeholder={userInfo.upiId ? "reset" : "Enter upi id"}
-                    id="upi"
-                    onChange={handleChange}
-                />
-                
-                <p className="text-[#257fe3] text-[15px] underline cursor-pointer" onClick={handleEnter}>
-                    enter
-                </p>
-            </>
-            )}
-
-                
-              </div>
-            </div>
-
-            {/* Logout button */}
-            <div className="flex flex-col mr-2 h-[70px] w-[60px] items-center justify-center">
-              <MdLogout className="w-[35px] h-[35px]" onClick={onLogout}/>
-              <p>Logout</p>
-            </div>
-          </div>
+                        {/* Logout Section */}
+                        <button 
+                            onClick={onLogout}
+                            className="group flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-red-50 transition-colors"
+                        >
+                            <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-red-500 group-hover:bg-red-100 transition-all">
+                                <MdLogout size={24} />
+                            </div>
+                            <span className="text-[10px] font-black uppercase text-slate-400 group-hover:text-red-600">Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
         </div>
-      </div>
-    </>
-  );
+    );
 };
 
 export default ProfileCard;

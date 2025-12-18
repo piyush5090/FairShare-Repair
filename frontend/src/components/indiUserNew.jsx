@@ -1,105 +1,97 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { currUser } from "../contexts/UserContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { MdCheck, MdAdd } from "react-icons/md";
 
-const IndiUser = ({index,member, key,user, fullname, tripData, totalSpend, username, email  }) =>{
+const IndiUser = ({ index, user, fullname, tripData, username }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [invited, setInvited] = useState(false);
+  const { userInfo } = currUser();
 
-    const avatarColors = [
-      "#A7D2CB", // mint green
-      "#F2B5D4", // soft pink
-      "#F7D9C4", // peach beige
-      "#C3FBD8", // light mint
-      "#B5C0D0", // dusty lavender
-      "#FFF4B1", // soft yellow
-      "#D7E3FC", // powder blue
-      "#FFDDD2", // coral tint
-      "#E0BBE4", // pastel purple
-      "#BEE1E6"  // light aqua
-    ];
-  
-    const avatarBgColor = avatarColors[index % avatarColors.length];
-    const nameParts = fullname?.trim().split(" ");
-    const isLongFullname = fullname?.length > 20;
-    const[isLoading,setIsLoading]=useState(false);
-    const[invited,setInvited] = useState(false);
-    // const[currUser,setCurrUser]=useState(null);
-    const {userInfo, isUserLoading, getUser} = currUser();
+  const avatarColors = [
+    "#ccfbf1", // teal-100
+    "#fef3c7", // amber-100
+    "#dcfce7", // green-100
+    "#e0f2fe", // sky-100
+    "#f3e8ff", // purple-100
+    "#ffedd5", // orange-100
+    "#f1f5f9", // slate-100
+  ];
 
+  const avatarBgColor = avatarColors[index % avatarColors.length];
+  const nameParts = fullname?.trim().split(" ") || ["U"];
+  const initials = nameParts.length > 1 
+    ? `${nameParts[0].charAt(0)}${nameParts[nameParts.length - 1].charAt(0)}`
+    : nameParts[0].charAt(0);
+
+  const handleInvite = async () => {
+    if (invited || isLoading) return;
     
-
-    // const getUser = async () =>{
-    //   setIsLoading(true);
-    //   try{
-    //     const res = await axiosInstance.get("/getUser");
-    //     setCurrUser(res.data.user);
-    //   }catch(err){
-    //     console.log(err);
-    //   }finally{
-    //     setIsLoading(false);
-    //   }  
-    // }
-
-    const handleInvite = async ()=>{
-      setIsLoading(true);
-      try{
-        setInvited(true);
-        const res = await axiosInstance.post(`/api/notifications/invite`, { 
-          recipientId: user._id,
-          tripId: tripData.TripId,
-        });
-        console.log(res);
-      }catch(err){ 
-          console.log(err);
-      }finally{
-        setIsLoading(false);
-      }
+    setIsLoading(true);
+    try {
+      await axiosInstance.post(`/api/notifications/invite`, {
+        recipientId: user._id,
+        tripId: tripData.TripId,
+      });
+      setInvited(true);
+    } catch (err) {
+      console.error("Invite failed:", err);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    // useEffect(()=>{
-    //   getUser();
-    // },[])
-  
-    return(
-      <>
-        <div className="flex w-full h-[71px] mt-1 justify-between rounded-[15px] mb-[1px] bg-[rgba(242,236,236,0.17)]">
-              <div className="px-1 justify-center items-center flex">
-                <div className="flex items-center justify-center w-[50px] h-[50px] rounded-[14px]"
-                  style={{ backgroundColor: avatarBgColor }}
-                >
-                  <p className="text-[19px] font-nunito font-normal leading-[38px] tracking-[0px] text-left">
-                    {nameParts[0]?.charAt(0).toUpperCase()}{nameParts[1]?.charAt(0).toUpperCase()}
-                  </p>
-                </div>
-    
-                <div className="w-auto flex flex-col justify-start"> 
-                    <p className="mx-2 text-[18px] font-[Montserrat] font-medium italic leading-[29px] tracking-[0px] text-left text-[rgb(69,26,3)]">
-                      {isLongFullname ? `${fullname?.slice(0,12)}...` : fullname}
-                        {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
-                            <span className={isLongFullname ? "scroll-marquee" : ""}>
-                                 {fullname}
-                            </span>
-                        </div> */}
-                    </p>
+  return (
+    <div className="w-full h-20 bg-white border border-slate-100 rounded-[24px] px-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="flex items-center gap-3 min-w-0">
+        {/* User Avatar Squircle */}
+        <div 
+          className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-slate-700 font-black text-lg shadow-inner"
+          style={{ backgroundColor: avatarBgColor }}
+        >
+          {initials.toUpperCase()}
+        </div>
 
-                    <p className="mx-2 italic text-[14px] font-[Montserrat] font-medium leading-[16px]  tracking-[0px] text-left text-gray-700">
-                        @{username}
-                    </p>
-                </div>
-              </div>
-    
-              <div className="flex h-full mx-3 w-[90px] justify-center items-center pr-1">
-                  <button className={`h-[40px] w-full text-[14px] font-[Montserrat] font-medium ${invited ? "bg-green-300" : "bg-slate-200"} rounded-[20px]`}
-                    onClick={handleInvite}
-                  >
-                  {invited ? "Invited" : "Invite"}
-                  
-                  </button>
-                </div>
-    
-            </div>
-  
-      </>
-    );
-  }
-  
-  export default IndiUser;
+        {/* User Details */}
+        <div className="flex flex-col min-w-0">
+          <p className="text-slate-800 font-black text-[16px] leading-tight truncate">
+            {fullname}
+          </p>
+          <p className="text-slate-400 font-bold text-xs uppercase tracking-tight truncate">
+            @{username}
+          </p>
+        </div>
+      </div>
+
+      {/* Action Button */}
+      <div className="shrink-0 ml-4">
+        <button
+          onClick={handleInvite}
+          disabled={invited || isLoading}
+          className={`h-9 px-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-1.5 active:scale-95
+            ${invited 
+              ? "bg-teal-50 text-teal-600 border border-teal-100" 
+              : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200"
+            } ${isLoading ? "opacity-70" : ""}`}
+        >
+          {isLoading ? (
+            <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+          ) : invited ? (
+            <>
+              <MdCheck size={14} />
+              Sent
+            </>
+          ) : (
+            <>
+              <MdAdd size={14} />
+              Invite
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default IndiUser;

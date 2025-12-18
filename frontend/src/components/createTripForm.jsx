@@ -2,81 +2,83 @@ import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-const CreateTripForm = ( { cancelForm, getAllTrips })=>{
+const CreateTripForm = ({ cancelForm, getAllTrips }) => {
+  const [formData, setFormData] = useState({ tripName: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const[change,setChange] = useState("");
-    const[isLoading,setIsLoading]=useState(false);
-    const navigate = useNavigate();
+  const changeEvent = (event) => {
+    const { id, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
 
-    function changeEvent(event){
-        event.preventDefault();
-        const { id,value } = event.target;
-        setChange(prevState => ({
-            ...prevState,
-            [id]:value
-        }));
+  const handleCreate = async (e) => {
+    if (e) e.preventDefault();
+    if (!formData.tripName.trim()) return;
+
+    setIsLoading(true);
+    try {
+      await axiosInstance.post("/api/trips", formData);
+      await getAllTrips();
+      cancelForm();
+      navigate("/tripsDashboard");
+    } catch (err) {
+      console.error("Failed to create trip:", err);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    const handleCancel = ()=>{
-        cancelForm();
-    }
+  return (
+    <div className="w-full max-w-[380px] bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100 font-nunito animate-in fade-in zoom-in duration-200">
+      <div className="p-8">
+        {/* Left Oriented Title */}
+        <h2 className="text-3xl font-black text-slate-800 text-left mb-2 tracking-tight">
+          New Trip
+        </h2>
+        <p className="text-slate-500 text-left mb-8 font-medium">Where to next?</p>
 
-    const handleCreate = async ()=>{
-        setIsLoading(true);
-        try{
-            const res = await axiosInstance.post("/api/trips", change);
-            navigate("/tripsDashboard");
-            getAllTrips();
-            cancelForm();
-        }catch(err){
-            console.log(err);
-        }finally{
-            setIsLoading(false);
-        }
-    }
-
-    return(
-        <>
-        <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center">
-      <div className="flex w-[342.11px] h-[216px] border border-[#75b3f8]  shadow-[0px_4px_4px_rgba(0,0,0,0.25)] backdrop-blur-[10px] rounded-[33px] bg-slate-300 p-4">
-        <div className="flex flex-col justify-start items-center gap-4 w-full">
-          <p className="text-[30px] leading-[41px] font-semibold text-gray-700 text-center font-[Nunito]">
-            Create New Trip
-          </p>
-
-          <div className="relative w-[312px] h-[47px] rounded-[12px] bg-[#fbfbfb]">
+        <div className="space-y-6">
+          <div className="relative">
+            <label className="text-[11px] font-bold text-teal-600 uppercase tracking-widest ml-1 mb-2 block">
+              Trip Name
+            </label>
             <input
-            onChange={changeEvent}
-            id="tripName"
+              autoFocus
+              id="tripName"
               type="text"
-              placeholder="Trip Name"
-              className="w-full h-full px-4 rounded-[12px] bg-[#fbfbfb] outline-none font-[Nunito]"
+              placeholder="e.g. Weekend in Tokyo"
+              value={formData.tripName}
+              onChange={changeEvent}
+              onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+              className="w-full h-[56px] px-5 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-teal-500 focus:bg-white outline-none transition-all text-slate-700 font-semibold shadow-inner"
             />
           </div>
 
-          <div className="flex justify-between gap-8 mt-2 ">
-          <button className="w-[117px] h-[45px] rounded-[21px] bg-[#93c5fd] text-[20px] leading-[27px] 
-                            font-semibold text-[#fbfbfb] text-center font-[Nunito] "
-                                onClick={handleCancel}
-                            >
-            Cancel
-          </button>
+          <div className="flex gap-3 pt-2">
+            <button
+              disabled={isLoading}
+              onClick={cancelForm}
+              className="flex-1 h-[54px] rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold transition-all active:scale-95 disabled:opacity-50"
+            >
+              Cancel
+            </button>
 
-          <button className="w-[117px] h-[45px] rounded-[21px] bg-[#76c67f] text-[20px] leading-[27px] 
-                            font-semibold text-[#fbfbfb] text-center font-[Nunito] "
-                                onClick={handleCreate}
-                            >
-                                {isLoading ? "Creating.." : "Create"}
-          </button>
-
+            <button
+              disabled={isLoading || !formData.tripName.trim()}
+              onClick={handleCreate}
+              className="flex-[2] h-[54px] rounded-2xl bg-teal-500 hover:bg-teal-600 text-white font-bold shadow-lg shadow-teal-100 transition-all active:scale-95 disabled:grayscale disabled:opacity-50"
+            >
+              {isLoading ? "Creating..." : "Create Trip"}
+            </button>
           </div>
         </div>
       </div>
     </div>
-            
-
-        </>
-    );
-}
+  );
+};
 
 export default CreateTripForm;

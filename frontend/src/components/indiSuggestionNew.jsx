@@ -1,135 +1,108 @@
-import { SiPhonepe } from "react-icons/si";
-import { SiPaytm } from "react-icons/si";
+import { SiPhonepe, SiPaytm } from "react-icons/si";
 import { FaGooglePay } from "react-icons/fa";
+import { HiArrowLongRight } from "react-icons/hi2";
 import { currUser } from "../contexts/UserContext";
 
 const IndiSuggetion = ({ suggestion, index }) => {
   const { userInfo } = currUser();
 
-  const avatarColors = [
-    "#A7D2CB", // mint green
-    "#F2B5D4", // soft pink
-    "#F7D9C4", // peach beige
-    "#C3FBD8", // light mint
-    "#B5C0D0", // dusty lavender
-    "#FFF4B1", // soft yellow
-    "#D7E3FC", // powder blue
-    "#FFDDD2", // coral tint
-    "#E0BBE4", // pastel purple
-    "#BEE1E6"  // light aqua
-  ];
+  const avatarColors = ["#ccfbf1", "#fef3c7", "#dcfce7", "#e0f2fe", "#f3e8ff", "#ffedd5", "#f1f5f9"];
 
-  const fromMemberFullname = suggestion.from.fullname;
-  const toMemberFullname = suggestion.to.fullname;
-  const fromMemberUsername = suggestion.from.username;
-  const toMemberUsername = suggestion.to.username;
-  const amount = suggestion.amount;
-  const upiId = suggestion.to.upiId;
-
-  const avatarBgColor = avatarColors[index % avatarColors.length];
-  const avatarBgColor2 = avatarColors[index * 2 % avatarColors.length];
-  const nameParts1 = fromMemberFullname.trim().split(" ");
-  const nameParts2 = toMemberFullname.trim().split(" ");
-  const isLongFromMemberFullname = fromMemberFullname?.length > 15;
-  const isLongToMemberFullname = toMemberFullname?.length > 13;
+  const { from, to, amount } = suggestion;
+  const isPayer = userInfo?.username === from.username;
 
   const handlePay = () => {
-    if (!upiId || upiId.trim() === "" || !amount || amount <= 0) {
-      alert("Missing UPI ID or amount.");
+    if (!to.upiId || amount <= 0) {
+      alert("UPI ID or Amount is missing.");
       return;
     }
-
-    const url = `upi://pay?pa=${upiId}&pn=FairShare%20Payment&am=${amount}&cu=INR&tn=Payment%20for%20FairShare`;
+    // Deep link for UPI
+    const url = `upi://pay?pa=${to.upiId}&pn=${encodeURIComponent(to.fullname)}&am=${amount}&cu=INR&tn=FairShareSettle`;
     window.location.href = url;
   };
 
+  const getInitials = (name) => {
+    const parts = name.trim().split(" ");
+    return parts.length > 1 
+      ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+      : parts[0][0].toUpperCase();
+  };
+
   return (
-    <>
-      <div className="flex justify-center mb-2 items-center px-3 flex-col w-full h-[240px] ">
-        <div className="flex flex-col p-3 w-full h-[190px] rounded-[15px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] bg-[rgba(242,236,236,0.17)]">
-          {/* first section */}
-          <div className="flex w-full h-[65px] justify-between rounded-[15px] bg-[rgba(242,236,236,0.17)]">
-            <div className="px-1 justify-center items-center flex">
-              <div
-                className="flex items-center justify-center w-[50px] h-[50px] rounded-[14px]"
-                style={{ backgroundColor: avatarBgColor }}
-              >
-                <p className="text-[18px] font-nunito font-normal leading-[38px] tracking-[0px] text-left">
-                  {nameParts1[0]?.charAt(0).toUpperCase()}
-                  {nameParts1[1]?.charAt(0).toUpperCase()}
-                </p>
-              </div>
-
-              <div className="w-auto flex flex-col items-start">
-                <p className="mx-2 text-[18px] font-[Montserrat] font-semibold italic leading-[27px] tracking-[0px] text-left text-blue-500 ">
-                  {isLongFromMemberFullname ? `${fromMemberFullname?.slice(0, 12)}...` : fromMemberFullname}
-                  <span className="relative top-3 ml-3 text-gray-800 text-[20px] font-semibold">can pay</span>
-                </p>
-
-                <p className="mx-2 text-[13px] font-[Montserrat] font-medium italic leading-[21px] tracking-[0px] text-left text-gray-600">
-                  @{fromMemberUsername}
-                </p>
-              </div>
-            </div>
+    <div className="w-full bg-white border border-slate-100 rounded-[32px] p-5 shadow-sm mb-4">
+      <div className="flex items-center justify-between gap-2">
+        
+        {/* Payer (From) */}
+        <div className="flex flex-col items-center gap-2 w-1/3">
+          <div 
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-slate-700 font-black text-lg shadow-inner"
+            style={{ backgroundColor: avatarColors[index % avatarColors.length] }}
+          >
+            {getInitials(from.fullname)}
           </div>
-
-          {/* second section */}
-          <div className="flex w-full h-[60px] justify-between rounded-[15px] bg-[rgba(242,236,236,0.17)]">
-            <div className="flex items-center h-[65px] ml-2 w-[140px]">
-              <span className="text-green-600 flex font-montserrat text-[22px] font-semibold leading-[34px] tracking-[0px] text-left">
-                {amount.toFixed(2)}/-
-              </span>
-            </div>
-
-            <div className="flex w-[50px] h-[65px] justify-end items-center font-montserrat text-gray-800 text-[22px] font-semibold leading-[40px] tracking-[0px] text-right">
-              <p className=" relative text-gray-800 font-semibold ">to </p>
-            </div>
-
-            <div className="flex w-full h-[65px] justify-end rounded-[15px] mb-[1px] bg-[rgba(242,236,236,0.17)]">
-              <div className="px-1 justify-center items-center flex">
-                <div
-                  className="flex items-center justify-center w-[50px] h-[50px] rounded-[14px]"
-                  style={{ backgroundColor: avatarBgColor2 }}
-                >
-                  <p className="text-[18px] font-nunito font-normal leading-[38px] tracking-[0px] text-left">
-                    {nameParts2[0]?.charAt(0).toUpperCase()}
-                    {nameParts2[1]?.charAt(0).toUpperCase()}
-                  </p>
-                </div>
-
-                <div className="w-auto flex flex-col items-start">
-                  <p className="mx-2 text-[18px] font-[Montserrat] font-semibold italic leading-[27px] tracking-[0px] text-left text-blue-500 ">
-                    {isLongToMemberFullname ? `${toMemberFullname?.slice(0, 11)}...` : toMemberFullname}
-                  </p>
-
-                  <p className="mx-2 text-[13px] font-[Montserrat] font-medium italic leading-[21px] tracking-[0px] text-left text-gray-600">
-                    @{toMemberUsername}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="text-center min-w-0 w-full">
+            <p className="text-slate-800 font-black text-sm truncate leading-none">{from.fullname.split(" ")[0]}</p>
+            <p className="text-slate-400 font-bold text-[10px] uppercase truncate">@{from.username}</p>
           </div>
         </div>
 
-        <button
-          className={`w-full flex gap-2 items-center justify-center mt-3 h-[45px] rounded-[20px] 
-                    ${userInfo?.username !== fromMemberUsername
-              ? 'bg-gray-300 cursor-not-allowed'
-              : 'bg-indigo-200 hover:bg-indigo-300'}
-                 `}
-          onClick={handlePay}
-          disabled={userInfo?.username !== fromMemberUsername}
-        >
-          <p className="text-[rgb(55,65,81)] flex font-[Montserrat] text-[16px] font-medium leading-[24px] tracking-[0px] text-left">
-            Pay via UPI
-          </p>
-          <SiPhonepe />
-          <SiPaytm className="h-[30px] w-[30px]" />
-          <FaGooglePay className="h-[35px] w-[35px]" />
-        </button>
+        {/* Transaction Info (Middle) */}
+        <div className="flex flex-col items-center flex-1">
+          <span className="text-teal-600 font-black text-lg tracking-tighter">
+            ₹{amount.toFixed(2)}
+          </span>
+          <div className="flex items-center w-full gap-1">
+             <div className="h-[2px] flex-1 bg-slate-100 rounded-full"></div>
+             <HiArrowLongRight className="text-slate-200" size={20} />
+             <div className="h-[2px] flex-1 bg-slate-100 rounded-full"></div>
+          </div>
+          <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-1">Settle up</span>
+        </div>
+
+        {/* Receiver (To) */}
+        <div className="flex flex-col items-center gap-2 w-1/3">
+          <div 
+            className="w-12 h-12 rounded-2xl flex items-center justify-center text-slate-700 font-black text-lg shadow-inner"
+            style={{ backgroundColor: avatarColors[(index + 1) % avatarColors.length] }}
+          >
+            {getInitials(to.fullname)}
+          </div>
+          <div className="text-center min-w-0 w-full">
+            <p className="text-slate-800 font-black text-sm truncate leading-none">{to.fullname.split(" ")[0]}</p>
+            <p className="text-slate-400 font-bold text-[10px] uppercase truncate">@{to.username}</p>
+          </div>
+        </div>
       </div>
-    </>
+
+      {/* UPI Button Section */}
+      <div className="mt-5">
+        <button
+          onClick={handlePay}
+          disabled={!isPayer}
+          className={`w-full h-12 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 active:scale-95
+            ${isPayer 
+              ? "bg-slate-900 text-white shadow-lg shadow-slate-200" 
+              : "bg-slate-50 text-slate-300 cursor-not-allowed"}`}
+        >
+          <span className="font-black text-xs uppercase tracking-widest">
+            {isPayer ? "Pay via UPI" : "Only Payer can pay"}
+          </span>
+          {isPayer && (
+            <div className="flex items-center gap-2 border-l border-white/20 pl-3">
+              <SiPhonepe size={16} />
+              <SiPaytm size={24} />
+              <FaGooglePay size={24} />
+            </div>
+          )}
+        </button>
+        {isPayer && !to.upiId && (
+          <p className="text-[9px] text-red-400 font-bold text-center mt-2 uppercase tracking-tight">
+            Receiver has not added a UPI ID yet
+          </p>
+        )}
+      </div>
+    </div>
   );
-}
+};
 
 export default IndiSuggetion;

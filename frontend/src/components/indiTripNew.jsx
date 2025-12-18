@@ -1,23 +1,8 @@
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-import axiosInstance from "../../utils/axiosInstance";
+import { MdChevronRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-
 
 const IndiTrip = ({ tripname, tripId, createdAt, index, admin }) => {
   const navigate = useNavigate();
-
-  const [tripData, setTripData] = useState({
-    TripId: tripId,
-    Tripname: tripname,
-    CreatedAt: createdAt,
-    Admin: admin,
-  });
-
-  
-
-  const [TripId,setTripId] = useState('');
-  
 
   const formattedDate = new Date(createdAt).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -25,44 +10,46 @@ const IndiTrip = ({ tripname, tripId, createdAt, index, admin }) => {
     year: "numeric",
   });
 
-  const handleClick = () => {
-    navigate("/indiTripDashboard", { state: { tripData: tripData } });
+  const getInitials = (name) => {
+    const parts = name.trim().split(" ");
+    return parts.length > 1 
+      ? (parts[0][0] + parts[1][0]).toUpperCase() 
+      : name.substring(0, 2).toUpperCase();
   };
 
-  const isLongTripname = tripname.length > 12;
+  const handleClick = () => {
+    navigate("/indiTripDashboard", { 
+      state: { tripData: { TripId: tripId, Tripname: tripname, CreatedAt: createdAt, Admin: admin } } 
+    });
+  };
 
   return (
-    <>
-      <div
-        className="flex w-full max-w-2xl justify-between items-center mx-auto px-4 h-[80px] rounded-[14px] shadow-md bg-[rgba(196,196,196,0.1)] hover:bg-gray-200 mt- cursor-pointer"
-        onClick={handleClick}
-      >
-        <div className="flex justify-center items-center w-[55px] h-[55px] bg-[#E8E7E7] rounded-full">
-          <p className="text-[22px] font-nunito font-normal text-[#374151]">
-            {tripname.charAt(0).toUpperCase()}
-            {tripname.charAt(tripname.length - 1).toUpperCase()}
-          </p>
-        </div>
-
-        <div className="flex flex-col justify-start items-start flex-1 ml-4">
-          <div className="text-[28px] font-nunito text-4xl font-medium italic leading-[36px] text-[#374151]">
-            <div className={`scroll-marquee-wrapper ${isLongTripname ? "" : "overflow-visible"}`}>
-              <span className={isLongTripname ? "scroll-marquee" : ""}>
-                {tripname}
-              </span>
-            </div>
-          </div>
-
-          <p className="text-[14px] font-nunito font-normal italic text-[#374151]">
-            {formattedDate}
-          </p>
-        </div>
-
-        <div className="w-[70px] flex items-center justify-end">
-          <MdKeyboardDoubleArrowRight className="h-[60px] w-[60px] text-gray-600" />
-        </div>
+    <div
+      onClick={handleClick}
+      className="group flex w-full max-w-2xl justify-between items-center mx-auto px-5 h-[88px] rounded-[24px] bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all duration-300 cursor-pointer active:scale-[0.98]"
+    >
+      {/* Icon - Stays left */}
+      <div className="flex justify-center items-center shrink-0 w-[54px] h-[54px] bg-slate-100 group-hover:bg-teal-500 rounded-2xl transition-colors duration-300">
+        <p className="text-[16px] font-bold text-slate-500 group-hover:text-white transition-colors">
+          {getInitials(tripname)}
+        </p>
       </div>
-    </>
+
+      {/* Title & Date - Left Oriented */}
+      <div className="flex flex-col justify-center items-start flex-1 ml-4 min-w-0">
+        <h3 className="w-full text-lg font-bold font-nunito text-slate-800 leading-snug truncate">
+          {tripname}
+        </h3>
+        <p className="text-[12px] font-bold text-slate-400 mt-0.5 tracking-tight">
+          Created on {formattedDate}
+        </p>
+      </div>
+
+      {/* Arrow - Far right */}
+      <div className="ml-2 bg-slate-50 p-2 rounded-xl group-hover:bg-teal-50 transition-colors">
+        <MdChevronRight className="h-5 w-5 text-slate-400 group-hover:text-teal-600" />
+      </div>
+    </div>
   );
 };
 

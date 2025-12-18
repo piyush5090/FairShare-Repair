@@ -1,76 +1,100 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { IoArrowForwardCircleOutline, IoLockClosedOutline } from "react-icons/io5";
+import { MdOutlineAnalytics, MdOutlineModeOfTravel } from "react-icons/md";
 import Navbar from "./navbar";
+
+// Assets
 import tripBg from '../assets/tripBg.jpg';
 import groupBg from '../assets/groupBG.jpg';
-import { IoArrowForwardCircleOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
 
-
-const Dashboard = () =>{
-
+const Dashboard = () => {
     const navigate = useNavigate();
 
-    const onGroupClick = () => {
-        navigate("/groupDashboard");
-    }
+    const onTripsClick = () => navigate("/tripsDashboard");
 
-    const onTripsClick = () => {    
-        navigate("/tripsDashboard");
-    }
-
-    return(
-        <>
+    return (
+        <div className="min-h-screen bg-[#F8FAFC] font-nunito flex flex-col">
             <Navbar />
-            <div className="flex flex-col justify-center w-full px-4 h-[600px]">
-            <h2 className="absolute w-[275px] h-[34px] left-[19px] right-[99px] top-[74px] bottom-[744px] text-gray-700 font-inter text-[28px] font-semibold leading-[34px] text-left">
-                Select Category:-
-            </h2>
-            
-                <div className="relative flex w-full max-w-md h-[215px] mx-auto top-[35px] bottom-[517px] rounded-[15px] shadow-lg bg-cover bg-center"
-                    style={{backgroundImage: `url(${tripBg})`}} onClick={onTripsClick}
-                >
-                    <div className="absolute inset-0 bg-white bg-opacity-55"></div>
 
-                    <div className="relative flex items-end py-4 justify-around w-full">
-                    <p className="relative w-[255px] h-[66px] left-[17px] right-[94px] bottom-[30px] 
-                        text-[#451a03] font-nunito text-[18px] font-extrabold italic leading-[25px] text-left"
-                            // style={{fontFamily: "Nunito, sans-serif"}}
-                        >
-                                Going on a trip with friends? Keep track of every expense effortlessly
+            <main className="flex-1 w-full max-w-xl mx-auto px-6 pb-12">
+                {/* Header */}
+                <header className="mb-8">
+                    <h2 className="text-3xl font-black text-slate-800 tracking-tighter">
+                        Select Category
+                    </h2>
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">
+                        Choose your tracking mode
                     </p>
-                    <IoArrowForwardCircleOutline className="relative w-[65px] mb-6 h-[65px] text-[#451a03]" onClick={onTripsClick}/>
+                </header>
+
+                <div className="flex flex-col gap-6">
+                    
+                    {/* Active Option: Group Trips */}
+                    <div 
+                        className="relative group w-full h-[220px] rounded-[32px] overflow-hidden shadow-xl shadow-slate-200 cursor-pointer transition-all active:scale-[0.98]"
+                        onClick={onTripsClick}
+                    >
+                        <div 
+                            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                            style={{ backgroundImage: `url(${tripBg})` }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent" />
+                        
+                        <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white border border-white/30">
+                                <MdOutlineModeOfTravel size={24} />
+                            </div>
+                            
+                            <div className="flex items-end justify-between gap-4">
+                                <div className="flex flex-col">
+                                    <h3 className="text-white font-black text-xl tracking-tight">Group Trips</h3>
+                                    <p className="text-slate-200 text-xs font-bold leading-tight max-w-[200px] mt-1">
+                                        Going on a trip with friends? Keep track of every expense effortlessly.
+                                    </p>
+                                </div>
+                                <IoArrowForwardCircleOutline className="text-white shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" size={56} />
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Upcoming Option: Individual Tracking */}
+                    <div className="relative w-full h-[220px] rounded-[32px] overflow-hidden shadow-lg shadow-slate-100 grayscale-[0.5] opacity-80">
+                        <div 
+                            className="absolute inset-0 bg-cover bg-center"
+                            style={{ backgroundImage: `url(${groupBg})` }}
+                        />
+                        {/* Darker overlay for 'Disabled' feel */}
+                        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
+                        
+                        <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                            <div className="flex justify-between items-start">
+                                <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center text-white/50 border border-white/10">
+                                    <MdOutlineAnalytics size={24} />
+                                </div>
+                                <div className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/20 flex items-center gap-2">
+                                    <IoLockClosedOutline size={12} />
+                                    Upcoming
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-end justify-between gap-4">
+                                <div className="flex flex-col">
+                                    <h3 className="text-white/70 font-black text-xl tracking-tight">Personal Tracking</h3>
+                                    <p className="text-white/50 text-xs font-bold leading-tight max-w-[200px] mt-1">
+                                        Track and analyze individual expenses to manage your budget better.
+                                    </p>
+                                </div>
+                                <div className="text-white/20">
+                                    <IoArrowForwardCircleOutline size={56} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-
-                <div className="relative flex w-full max-w-md h-[215px] mx-auto top-[50px] bottom-[517px] rounded-[15px] shadow-lg bg-cover bg-center"
-                    style={{backgroundImage: `url(${groupBg})`}} onClick={onGroupClick}
-                >
-                    <div className="absolute inset-0 bg-white bg-opacity-55"></div>
-                    
-                    <div className="relative flex flex-col items-end gap-20 w-full">
-                    <div className="relative mb- h-[25px] rounded-b-[10px] w-[150px] bg-blue-400"> 
-                        <p className="text-white font-[nunito]">Upcoming....</p>
-                    </div>
-                    <div className="flex ">
-                        <p className="w-[255px] h-[66px]
-                            text-[#451a03] font-nunito text-[18px] font-extrabold italic leading-[25px] text-left"
-                                // style={{fontFamily: "Nunito, sans-serif"}}
-                            >
-                                    Living with roommates? Manage shared expenses hassle-free!
-                        </p>
-                        <IoArrowForwardCircleOutline className="relative w-[65px] mb-6 mr-3 h-[65px] text-[#451a03]" onClick={onGroupClick}/>
-                    </div>
-                    </div>
-                </div>
-
-
-
-                    
-                    
-            </div>
-
-            
-
-        </>
+            </main>
+        </div>
     );
 }
 

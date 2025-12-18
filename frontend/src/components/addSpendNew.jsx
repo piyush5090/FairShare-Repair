@@ -1,123 +1,150 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
-import axios from "axios";
-import { FaExclamation } from "react-icons/fa";
+import { FaExclamationCircle } from "react-icons/fa";
+import { motion } from "framer-motion";
 
-
-const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) =>{
-
-    const[isLoading,setIsLoading] = useState(false);
-    const [error,setError] = useState('');
-
-  const [data,setData] = useState({
+const AddSpend = ({ handleShowAddSpend, tripId, refreshTripData }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [data, setData] = useState({
     amount: "",
-    Where: ""
+    where: "", // Consistent lowercase
   });
 
-  const where = data?.Where;
-
-
-  const handleSubmit = async (e) =>{
-    e.preventDefault();
-    const numericAmount = parseFloat(data?.amount);
-    if (isNaN(numericAmount) || numericAmount <= 0) {
-        setError('Please enter positive amount.');
-        return;
-    }
-
-    if (!where.trim()) {
-        setError('Please specify where..');
-        return;
-    }
-
-    setError('');
-
-    setIsLoading(true);
-    try{
-        const response = await axiosInstance.post(`/api/trips/${tripId}/expenses`,{ 
-            amount : numericAmount,
-            description: where,
-         });
-
-         if(response.status == 201){
-            refreshTripData();
-            handleShowAddSpend();
-         }else{
-            setError("An error has occured");
-         }
-    }catch(err){
-        console.log(err);
-    }finally{
-        setIsLoading(false);
-    }
-  }
-
-  function onChange(event){
+  const onChange = (event) => {
     const { id, value } = event.target;
-    setData(prevState =>({
+    setData((prevState) => ({
       ...prevState,
-      [id] : value
+      [id]: value,
     }));
-  }
+  };
 
-  useEffect(()=>{
-    console.log(tripId);
-},[]);
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    const numericAmount = parseFloat(data.amount);
 
-  return(
-    <>
-    <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-center justify-center"></div>
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="flex inset-0 z-50 flex-col items-center w-[342px] h-[285px] border border-[#75B3F8] backdrop-blur-sm transition-opacity duration-300 rounded-[33px] bg-slate-300">
-        <p className="text-[30px] font-nunito font-semibold mt-4 leading-[41px] tracking-[0px] text-center text-[#374151]">
-          Add New Spend
-        </p>
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      setError("Please enter a valid amount.");
+      return;
+    }
 
-        <div className="flex items-center justify-center w-[312px] h-[47px] rounded-[12px] mt-4 bg-[#FBFBFB]">
-        <input
-            id="amount"
-            type="number"
-            min="0"
-            step="1"
-            placeholder="Enter Amount"
-            className="w-full h-full px-4 rounded-[12px] bg-[#fbfbfb] font-semibold outline-none"
-            onChange={onChange}
-        />
+    if (!data.where.trim()) {
+      setError("Please specify where you spent.");
+      return;
+    }
 
-        </div>
+    setError("");
+    setIsLoading(true);
 
-        <div className="w-[312px] h-[47px] rounded-[12px] mt-4 bg-[#FBFBFB]">
-        <input
-            id="Where"
-            type="text"
-            placeholder="Where?"
-            className="w-full h-full px-4 rounded-[12px] bg-[#fbfbfb] font-semibold outline-none"
-            onChange={onChange}
-        />
+    try {
+      const response = await axiosInstance.post(`/api/trips/${tripId}/expenses`, {
+        amount: numericAmount,
+        description: data.where,
+      });
 
-        {error && <p className="flex justify-center items-center text-red-700 font-medium mt-1">
-          <FaExclamation className="h-[12px] w-[12px]"/>{error} </p>}
+      if (response.status === 201) {
+        refreshTripData();
+        handleShowAddSpend();
+      } else {
+        setError("Something went wrong.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Server error. Try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        </div>
+  return (
+    <div className="w-full max-w-[380px] bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100 font-nunito animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <div className="p-8">
+        {/* Left Oriented Header */}
+        <h2 className="text-3xl font-black text-slate-800 text-left mb-1 tracking-tight">
+          New Spend
+        </h2>
+        <p className="text-slate-400 text-left mb-8 font-medium italic">What did you buy?</p>
 
-        <div className="flex justify-around items-center w-[312px] h-[47px] mt-8">
-        <button class="w-[117px] mx-2 h-[45px] rounded-[21px] bg-blue-300 text-white font-bold"
-            onClick={handleShowAddSpend}
-        >
-            Cancel
-        </button>
+        <div className="space-y-5">
+          {/* Amount Input */}
+          <div className="relative">
+            <label className="text-[11px] font-bold text-teal-600 uppercase tracking-widest ml-1 mb-2 block">
+              How much?
+            </label>
+            <div className="relative group">
+              {/* Changed $ to ₹ */}
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+              <input
+                autoFocus
+                id="amount"
+                type="number"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={data.amount}
+                onChange={onChange}
+                /* Increased padding-left (pl-10) to accommodate the Rupee symbol width */
+                className="w-full h-[56px] pl-10 pr-5 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-teal-500 focus:bg-white outline-none transition-all text-slate-700 font-bold shadow-inner"
+              />
+            </div>
+          </div>
 
-          <button className="w-[117px] mx-2 h-[45px] rounded-[21px] bg-[rgb(118,198,127)] text-white font-bold"
-            onClick={handleSubmit}
-          >
-              {isLoading ? "Adding.." : "Add"}
-          </button>
+          {/* Location Input */}
+          <div className="relative">
+            <label className="text-[11px] font-bold text-teal-600 uppercase tracking-widest ml-1 mb-2 block">
+              Where?
+            </label>
+            <input
+              id="where"
+              type="text"
+              placeholder="e.g. Starbucks, Taxi, Hotel"
+              value={data.where}
+              onChange={onChange}
+              className="w-full h-[56px] px-5 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-teal-500 focus:bg-white outline-none transition-all text-slate-700 font-semibold shadow-inner"
+            />
+          </div>
+
+          {/* Error Message */}
+          <div className="h-6">
+            {error && (
+              <motion.p 
+                initial={{ opacity: 0, x: -5 }} 
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2 text-red-500 text-xs font-bold px-1"
+              >
+                <FaExclamationCircle /> {error}
+              </motion.p>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-2">
+            <button
+              disabled={isLoading}
+              onClick={handleShowAddSpend}
+              className="flex-1 h-[54px] rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold transition-all active:scale-95 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+
+            <button
+              disabled={isLoading || !data.amount || !data.where}
+              onClick={handleSubmit}
+              className="flex-[2] h-[54px] rounded-2xl bg-teal-500 hover:bg-teal-600 text-white font-bold shadow-lg shadow-teal-100 transition-all active:scale-95 disabled:grayscale disabled:opacity-50"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Adding..</span>
+                </div>
+              ) : (
+                "Add Spend"
+              )}
+            </button>
+          </div>
         </div>
       </div>
-      </div>  
-    </>
+    </div>
   );
-}
+};
 
-export default AddSpend
+export default AddSpend;

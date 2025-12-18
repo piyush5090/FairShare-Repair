@@ -1,70 +1,52 @@
-const IndiSpend = ({index,member}) =>{
+import React from 'react';
 
-  const avatarColors = [
-    "#A7D2CB", // mint green
-    "#F2B5D4", // soft pink
-    "#F7D9C4", // peach beige
-    "#C3FBD8", // light mint
-    "#B5C0D0", // dusty lavender
-    "#FFF4B1", // soft yellow
-    "#D7E3FC", // powder blue
-    "#FFDDD2", // coral tint
-    "#E0BBE4", // pastel purple
-    "#BEE1E6"  // light aqua
-  ];
-
+const IndiSpend = ({ index, member }) => {
+  const avatarColors = ["#A7D2CB", "#F2B5D4", "#F7D9C4", "#C3FBD8", "#B5C0D0", "#FFF4B1", "#D7E3FC", "#FFDDD2", "#E0BBE4", "#BEE1E6"];
   const avatarBgColor = avatarColors[index % avatarColors.length];
-  const fullname = member._id.fullname;
-  const username = member._id.username;
-  const totalSpend = member.totalSpend;
-  const nameParts = fullname.trim().split(" ");
-  const isLongFullname = fullname?.length > 13;
-  const isLongUsername = username?.length > 15;
 
-  return(
-    <>
-      <div className="flex w-full h-[71px] px-2 mt-3 justify-between rounded-[15px] mb-[1px] bg-[rgba(242,236,236,0.17)]">
-            <div className="px-1 justify-center items-center flex">
-              <div className="flex items-center justify-center w-[55px] h-[55px] rounded-[14px]"
-                style={{ backgroundColor: avatarBgColor }}
-              >
-                <p className="text-[20px] font-nunito font-normal leading-[38px] tracking-[0px] text-left">
-                  {nameParts[0]?.charAt(0).toUpperCase()}{nameParts[1]?.charAt(0).toUpperCase()}
-                </p>
-              </div>
+  const fullname = member._id?.fullname || "Unknown User";
+  const username = member._id?.username || "user";
+  const totalSpend = member.totalSpend || 0;
   
-              <div className="w-auto flex flex-col items-start"> 
-                  <p className="mx-2 text-[19px] font-[Montserrat] font-medium italic leading-[25px] tracking-[0px] text-left text-[rgb(69,26,3)]">
-                    {isLongFullname ? `${fullname?.slice(0,12)}...` : fullname}
-                      {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
-                          <span className={isLongFullname ? "scroll-marquee" : ""}>
-                               {fullname}
-                          </span>
-                      </div> */}
-                  </p>
+  const initials = fullname.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
 
-                  <p className="mx-2 text-[15px] font-[Montserrat] font-medium italic leading-[25px] tracking-[0px] text-left text-gray-600">
-                    {isLongUsername ? `@${username?.slice(0,15)}...` : `@${username}`}
-                      {/* <div className={`scroll-marquee-wrapper ${isLongFullname ? '' : 'overflow-visible'}`}>
-                          <span className={isLongFullname ? "scroll-marquee" : ""}>
-                               {fullname}
-                          </span>
-                      </div> */}
-                  </p>
-              </div>
-            </div>
-  
-            <div className="flex items-center pr-1">
-                <span class="text-green-600 font-montserrat text-[22px] font-semibold leading-[34px] tracking-[0px] text-left">
-                    {totalSpend}/-
-                </span>
-  
-              </div>
-  
-          </div>
+  return (
+    /* Ensure this is a relative/flex block. NO absolute or fixed classes here. */
+    <div className="flex w-full min-h-[82px] px-4 items-center justify-between rounded-[24px] bg-white border border-slate-100 shadow-sm transition-all hover:border-teal-100 active:scale-[0.98]">
+      
+      <div className="flex items-center gap-3 min-w-0"> 
+        <div 
+          className="flex-shrink-0 flex items-center justify-center w-[54px] h-[54px] rounded-2xl"
+          style={{ backgroundColor: avatarBgColor }}
+        >
+          <span className="text-[18px] font-black text-slate-700 font-nunito">
+            {initials}
+          </span>
+        </div>
 
-    </>
+        <div className="flex flex-col min-w-0 text-left"> 
+          <h3 className="text-[17px] font-black font-nunito text-slate-800 leading-tight truncate">
+            {fullname}
+          </h3>
+          <p className="text-[13px] font-bold font-nunito text-slate-400 mt-0.5">
+            @{username}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col items-end flex-shrink-0 ml-4">
+        <div className="flex items-center gap-0.5 text-teal-600">
+          <span className="text-[13px] font-black">₹</span>
+          <span className="text-[20px] font-black font-nunito leading-none">
+            {totalSpend}
+          </span>
+        </div>
+        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-1">
+          Total Spent
+        </span>
+      </div>
+    </div>
   );
-}
+};
 
 export default IndiSpend;

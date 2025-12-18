@@ -1,153 +1,127 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/onlylogo.png';
 
 const IntroPage = () => {
   const [showContent, setShowContent] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Adjust the breakpoint as needed
 
-  // Update isMobile state on resize
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const timer = setTimeout(() => {
+      setShowContent(true);
+    }, 1200); 
+    return () => clearTimeout(timer);
   }, []);
 
-  // Define animation variants for the logo and other elements
-  const logoVariants = {
-    initial: { opacity: 0, y: 100 }, // Start position below
-    center: { opacity: 1, y: 0 }, // Logo centered
-    top: { opacity: 1, y: isMobile ? -425 : -290 }, // Different final position based on screen size
-  };
-
   const contentVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 },
   };
 
-  useEffect(() => {
-    const timer1 = setTimeout(() => {
-      setShowContent(true); // Show content after the logo has moved
-    }, 1600); // Set this to the total duration for logo movement
-
-    return () => {
-      clearTimeout(timer1);
-    };
-  }, []);
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-4 px-4 relative">
-      {/* Animated Logo */}
+    <div className="min-h-screen flex flex-col items-center bg-[#F8FAFC] font-nunito overflow-x-hidden">
+      
+      {/* --- Animated Header/Logo Section --- */}
       <motion.div
-        className="flex flex-col items-center mb-8"
-        initial="initial" // Start from the initial state
-        animate={showContent ? 'top' : 'center'} // Animate based on animation state
-        variants={logoVariants}
-        transition={{ duration: 1, ease: 'easeOut' }} // Smoother transition
-        style={{
-          position: 'absolute',
-          top: '50%', // Center when not moved
-          transform: 'translateY(-50%)', // Center vertically
-          zIndex: 10, // Ensure it stays above other elements
-        }}
+        layout
+        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+        className={`flex flex-col items-center z-20 ${
+          showContent ? 'mt-12 mb-8' : 'mt-[40vh]'
+        }`}
       >
-        <img src={logo} alt="FairShare Logo" className="w-22 h-20" />
-        <h1 className="text-4xl font-bold text-teal-800">FairShare</h1>
-        <p className="text-lg text-gray-600">Fair Spending, Fair Sharing.</p>
+        <motion.div
+          animate={{ scale: showContent ? 0.8 : 1 }}
+          className="bg-white p-4 rounded-[2rem] shadow-xl shadow-teal-100/50 mb-4"
+        >
+          <img src={logo} alt="FairShare Logo" className="w-16 h-16 object-contain" />
+        </motion.div>
+        
+        <h1 className="text-4xl font-black text-slate-800 tracking-tighter">
+          Fair<span className="text-teal-500">Share</span>
+        </h1>
+        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.3em] mt-2">
+          Fair Spending • Fair Sharing
+        </p>
       </motion.div>
 
-      {/* Spacer to create space for the logo and prevent overlap */}
-      <div style={{ height: '150px' }} /> {/* Adjust height as needed */}
+      {/* --- Features Grid --- */}
+      <div className="w-full max-w-xl px-6 pb-32">
+        <AnimatePresence>
+          {showContent && (
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              className="flex flex-col gap-4"
+            >
+              <FeatureCard 
+                delay={0.2}
+                title="Track Expenses"
+                desc="Keep a detailed record of all your trip expenses effortlessly."
+                icon="📊"
+              />
+              <FeatureCard 
+                delay={0.3}
+                title="Balance Payments"
+                desc="Automatically calculate who owes what for a fair split."
+                icon="⚖️"
+              />
+              <FeatureCard 
+                delay={0.4}
+                title="Real-Time Updates"
+                desc="Synced expenses across all devices for everyone in the trip."
+                icon="⚡"
+              />
+              <FeatureCard 
+                delay={0.5}
+                title="Secure Data"
+                desc="Your financial data is encrypted and managed with care."
+                icon="🛡️"
+              />
 
-      {/* Animated Features Section */}
-      <div
-        className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
-        style={{ position: 'relative', zIndex: 0 }}
-      >
-        {/* Feature 1: Track Expenses */}
-        <motion.div
-          className="p-6 bg-gray-200 rounded-lg shadow-md"
-          initial="hidden"
-          animate={showContent ? 'visible' : 'hidden'}
-          variants={contentVariants}
-          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.2 }}
-        >
-          <h2 className="text-2xl font-semibold mb-2 text-teal-800">Track Expenses</h2>
-          <p className="text-gray-600">
-            Keep a detailed record of all your trip expenses effortlessly.
-          </p>
-        </motion.div>
-
-        {/* Feature 2: Balance Payments */}
-        <motion.div
-          className="p-6 bg-gray-200 rounded-lg shadow-md"
-          initial="hidden"
-          animate={showContent ? 'visible' : 'hidden'}
-          variants={contentVariants}
-          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.4 }}
-        >
-          <h2 className="text-2xl font-semibold mb-2 text-teal-800">Balance Payments</h2>
-          <p className="text-gray-600">
-            Automatically calculate and balance who owes what for a fair share.
-          </p>
-        </motion.div>
-
-        {/* Feature 3: Real-Time Updates */}
-        <motion.div
-          className="p-6 bg-gray-200 rounded-lg shadow-md"
-          initial="hidden"
-          animate={showContent ? 'visible' : 'hidden'}
-          variants={contentVariants}
-          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.6 }}
-        >
-          <h2 className="text-2xl font-semibold mb-2 text-teal-800">Real-Time Updates</h2>
-          <p className="text-gray-600">
-            View and update expenses in real-time across all your devices.
-          </p>
-        </motion.div>
-
-        {/* Feature 4: Secure Transactions */}
-        <motion.div
-          className="p-6 bg-gray-200 rounded-lg shadow-md"
-          initial="hidden"
-          animate={showContent ? 'visible' : 'hidden'}
-          variants={contentVariants}
-          transition={{ duration: 0.5, ease: 'easeOut', delay: 0.8 }}
-        >
-          <h2 className="text-2xl font-semibold mb-2 text-teal-800">Secure Transactions</h2>
-          <p className="text-gray-600">
-            Ensure all your financial data is securely stored and managed.
-          </p>
-        </motion.div>
+              {/* --- Action Buttons --- */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="flex flex-col gap-3 mt-8"
+              >
+                <Link
+                  to="/signup"
+                  className="w-full h-14 bg-teal-500 text-white rounded-2xl flex items-center justify-center font-bold text-lg shadow-lg shadow-teal-100 active:scale-95 transition-transform"
+                >
+                  Create Account
+                </Link>
+                <Link
+                  to="/login"
+                  className="w-full h-14 bg-white text-slate-600 border border-slate-200 rounded-2xl flex items-center justify-center font-bold text-lg active:scale-95 transition-transform"
+                >
+                  Log In
+                </Link>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Animated Login/Signup Buttons */}
-      <motion.div
-        className="flex space-x-4"
-        initial="hidden"
-        animate={showContent ? 'visible' : 'hidden'}
-        variants={contentVariants}
-        transition={{ duration: 0.5, ease: 'easeOut', delay: 1 }}
-      >
-        <Link
-          to="/login"
-          className="px-6 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition transform hover:scale-105"
-        >
-          Login
-        </Link>
-        <Link
-          to="/signup"
-          className="px-6 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition transform hover:scale-105"
-        >
-          Sign Up
-        </Link>
-      </motion.div>
     </div>
   );
 };
+
+// Helper Component for Feature Cards
+const FeatureCard = ({ title, desc, icon, delay }) => (
+  <motion.div
+    initial={{ opacity: 0, x: -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay, duration: 0.5 }}
+    className="group p-5 bg-white rounded-[24px] border border-slate-100 shadow-sm flex gap-4 items-start hover:border-teal-200 transition-colors"
+  >
+    <div className="w-12 h-12 shrink-0 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl group-hover:bg-teal-50 transition-colors">
+      {icon}
+    </div>
+    <div>
+      <h3 className="text-lg font-black text-slate-800 leading-tight">{title}</h3>
+      <p className="text-sm text-slate-500 mt-1 leading-relaxed">{desc}</p>
+    </div>
+  </motion.div>
+);
 
 export default IntroPage;
