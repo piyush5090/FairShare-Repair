@@ -52,3 +52,7 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is Listening on Port ${PORT}`);
 });
+
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
