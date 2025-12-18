@@ -17,6 +17,7 @@ router.route('/:id')
 
 // Trip Lifecycle
 router.post('/:id/end', tripController.endTrip);
+router.post("/:id/send-emails", tripController.sendTripEndEmails);
 router.get('/:id/suggestions', tripController.getSuggestions);
 
 // Expenses within a trip

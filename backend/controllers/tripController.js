@@ -163,14 +163,11 @@ exports.endTrip = async (req, res) => {
         }
 
         const totalTripCost = trip.members.reduce(
-            (total, member) => total + member.totalSpend,
+            (sum, m) => sum + m.totalSpend,
             0
         );
 
         const perMemberShare = totalTripCost / trip.members.length;
-
-        trip.totalTripCost = totalTripCost;
-        trip.perMemberShare = perMemberShare;
 
         const balances = trip.members.map(member => ({
             member: member._id,
@@ -194,7 +191,7 @@ exports.endTrip = async (req, res) => {
             transactions.push({
                 from: ower.member._id,
                 to: receiver.member._id,
-                amount
+                amount,
             });
 
             ower.balance += amount;
@@ -204,31 +201,17 @@ exports.endTrip = async (req, res) => {
             if (receiver.balance === 0) receivers.shift();
         }
 
+        trip.totalTripCost = totalTripCost;
+        trip.perMemberShare = perMemberShare;
         trip.suggestedPayments = transactions;
-        trip.status = 'completed';
+        trip.status = "completed";
 
         await trip.save();
 
-        // ✅ SEND EMAILS (Render-safe)
-        for (const member of trip.members) {
-            try {
-                await sendTripEndEmail(
-                    member,
-                    trip,
-                    totalTripCost,
-                    perMemberShare
-                );
-                console.log(`✅ Email sent to ${member._id.email}`);
-            } catch (err) {
-                console.error(
-                    `❌ Email failed for ${member._id.email}`,
-                    err
-                );
-            }
-        }
-
-        // ✅ RESPOND AFTER EMAILS
-        res.status(200).json({ message: "Trip ended successfully" });
+        res.status(200).json({
+            message: "Trip ended successfully",
+            tripId: trip._id
+        });
 
     } catch (err) {
         console.error(err);
@@ -236,6 +219,38 @@ exports.endTrip = async (req, res) => {
     }
 };
 
+
+// controllers/emailController.js
+exports.sendTripEndEmails = async (req, res) => {
+    try {
+        const trip = await Trip.findById(req.params.id)
+            .populate('members._id', 'fullname email');
+
+        if (!trip) {
+            return res.status(404).json({ message: "Trip not found" });
+        }
+
+        for (const member of trip.members) {
+            try {
+                await sendTripEndEmail(
+                    member,
+                    trip,
+                    trip.totalTripCost,
+                    trip.perMemberShare
+                );
+                console.log(`Email sent → ${member._id.email}`);
+            } catch (err) {
+                console.error(`Email failed → ${member._id.email}`, err);
+            }
+        }
+
+        res.status(200).json({ message: "Emails sent successfully" });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Email sending failed" });
+    }
+};
 
 
 // @desc    Get settlement suggestions for a trip

@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   //baseURL: "https://fair-share-z6e8.vercel.app",
   withCredentials: true,
   
-  timeout: 60000,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },

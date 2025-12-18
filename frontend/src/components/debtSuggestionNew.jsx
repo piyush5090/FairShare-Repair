@@ -4,12 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../../utils/axiosInstance";
 import Navbar from "./navbar";
 import IndiSuggetion from "./indiSuggestionNew";
-import { MdOutlineAutoAwesome } from "react-icons/md";
+import { MdOutlineAutoAwesome, MdOutlineMailOutline } from "react-icons/md";
+import { toast } from "react-hot-toast"; // Assuming you use react-hot-toast, otherwise use alert
 
 const Suggestions = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [isNotifying, setIsNotifying] = useState(false); // New loading state for emails
   const [suggestions, setSuggestions] = useState([]);
   const [tripDetails, setTripDetails] = useState(null);
 
@@ -32,6 +34,25 @@ const Suggestions = () => {
     }
   };
 
+  const handleNotifyMembers = async () => {
+    console.log("hello");
+    if (!tripId) return;
+    setIsNotifying(true);
+    try {
+      await axiosInstance.post( 
+        `/api/trips/${tripId}/send-emails`,
+        {},
+        { timeout: 60000 } // Long timeout for bulk emails
+      );
+      toast.success("All members have been notified via email!");
+    } catch (err) {
+      console.error("Failed to send emails:", err);
+      toast.error("Failed to notify some members. Please try again.");
+    } finally {
+      setIsNotifying(false);
+    }
+  };
+
   useEffect(() => {
     fetchSuggestions();
   }, [tripId]);
@@ -43,14 +64,34 @@ const Suggestions = () => {
       {/* --- Sticky Summary Header --- */}
       <div className="fixed top-[64px] left-0 right-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-4 py-4">
         <div className="max-w-2xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-             <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-teal-100">
                 <MdOutlineAutoAwesome size={22} />
-             </div>
-             <div>
+              </div>
+              <div>
                 <h1 className="text-xl font-black text-slate-800 tracking-tighter leading-none">Trip Settlement</h1>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Smart split suggestions</p>
-             </div>
+              </div>
+            </div>
+
+            {/* Notify Members Button */}
+            <button
+              onClick={handleNotifyMembers}
+              disabled={isNotifying || isLoading}
+              className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all
+                ${isNotifying 
+                  ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
+                  : "bg-slate-900 text-white shadow-lg shadow-slate-200 active:scale-95 hover:bg-black"
+                }`}
+            >
+              {isNotifying ? (
+                <div className="w-3 h-3 border-2 border-slate-300 border-t-slate-500 rounded-full animate-spin" />
+              ) : (
+                <MdOutlineMailOutline size={16} />
+              )}
+              {isNotifying ? "Sending..." : "Notify Members"}
+            </button>
           </div>
 
           {/* Cost Summary Card */}
@@ -69,13 +110,13 @@ const Suggestions = () => {
       </div>
 
       {/* --- Suggestions List --- */}
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 pt-52 pb-10">
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 pt-56 pb-10">
         <div className="flex flex-col gap-3">
           <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 px-1">
             Recommended Settlements ({suggestions.length})
           </h2>
 
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
