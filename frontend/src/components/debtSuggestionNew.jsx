@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../../utils/axiosInstance";
+import axios from "axios";
 import Navbar from "./navbar";
 import IndiSuggetion from "./indiSuggestionNew";
 import { MdOutlineAutoAwesome, MdOutlineMailOutline } from "react-icons/md";
 import { toast } from "react-hot-toast"; // Assuming you use react-hot-toast, otherwise use alert
+const accessToken = localStorage.getItem("token");
 
 const Suggestions = () => {
   const navigate = useNavigate();
@@ -39,10 +41,15 @@ const Suggestions = () => {
     if (!tripId) return;
     setIsNotifying(true);
     try {
-      await axiosInstance.post( 
-        `/api/trips/${tripId}/send-emails`,
+      await axios.post(
+        `https://fair-share-repair.vercel.app/api/trips/${tripId}/send-emails`,
         {},
-        { timeout: 60000 } // Long timeout for bulk emails
+        {
+          timeout: 60000, // Long timeout for bulk emails
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
       toast.success("All members have been notified via email!");
     } catch (err) {
